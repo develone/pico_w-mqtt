@@ -5,6 +5,10 @@ include(pico_sdk_import.cmake)
 
 include(pico_extras_import_optional.cmake)
 
+if (DEFINED HOSTNAME)
+	add_compile_definitions(CYW43_HOST_NAME=\"${HOSTNAME}\")
+endif()
+
 project(pico_examples C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
