@@ -1,0 +1,215 @@
+cmake/
+├── build_variants
+│   ├── CMakeLists.txt
+│   ├── main.c
+│   ├── other.c
+│   └── other.h
+└── CMakeLists.txt
+pico_w/
+├── bt
+│   ├── a2dp_sink_demo
+│   │   └── CMakeLists.txt
+│   ├── a2dp_source_demo
+│   │   └── CMakeLists.txt
+│   ├── ancs_client_demo
+│   │   └── CMakeLists.txt
+│   ├── att_delayed_response
+│   │   └── CMakeLists.txt
+│   ├── avrcp_browsing_client
+│   │   └── CMakeLists.txt
+│   ├── btstack_audio_pico.c
+│   ├── CMakeLists.txt
+│   ├── config
+│   │   ├── btstack_config.h
+│   │   ├── FreeRTOSConfig.h
+│   │   └── lwipopts.h
+│   ├── dut_mode_classic
+│   │   └── CMakeLists.txt
+│   ├── FreeRTOS_Kernel_import.cmake
+│   ├── gap_dedicated_bonding
+│   │   └── CMakeLists.txt
+│   ├── gap_inquiry
+│   │   └── CMakeLists.txt
+│   ├── gap_le_advertisements
+│   │   └── CMakeLists.txt
+│   ├── gap_link_keys
+│   │   └── CMakeLists.txt
+│   ├── gatt_battery_query
+│   │   └── CMakeLists.txt
+│   ├── gatt_browser
+│   │   └── CMakeLists.txt
+│   ├── gatt_counter
+│   │   └── CMakeLists.txt
+│   ├── gatt_counter_with_wifi
+│   │   └── CMakeLists.txt
+│   ├── gatt_device_information_query
+│   │   └── CMakeLists.txt
+│   ├── gatt_heart_rate_client
+│   │   └── CMakeLists.txt
+│   ├── gatt_streamer_server
+│   │   └── CMakeLists.txt
+│   ├── gatt_streamer_server_with_wifi
+│   │   └── CMakeLists.txt
+│   ├── hfp_ag_demo
+│   │   └── CMakeLists.txt
+│   ├── hfp_hf_demo
+│   │   └── CMakeLists.txt
+│   ├── hid_host_demo
+│   │   └── CMakeLists.txt
+│   ├── hid_keyboard_demo
+│   │   └── CMakeLists.txt
+│   ├── hid_mouse_demo
+│   │   └── CMakeLists.txt
+│   ├── hog_boot_host_demo
+│   │   └── CMakeLists.txt
+│   ├── hog_host_demo
+│   │   └── CMakeLists.txt
+│   ├── hog_keyboard_demo
+│   │   └── CMakeLists.txt
+│   ├── hog_mouse_demo
+│   │   └── CMakeLists.txt
+│   ├── hsp_ag_demo
+│   │   └── CMakeLists.txt
+│   ├── hsp_hs_demo
+│   │   └── CMakeLists.txt
+│   ├── le_credit_based_flow_control_mode_client
+│   │   └── CMakeLists.txt
+│   ├── le_credit_based_flow_control_mode_server
+│   │   └── CMakeLists.txt
+│   ├── led_counter
+│   │   └── CMakeLists.txt
+│   ├── le_mitm
+│   │   └── CMakeLists.txt
+│   ├── le_streamer_client
+│   │   └── CMakeLists.txt
+│   ├── mod_player
+│   │   └── CMakeLists.txt
+│   ├── nordic_spp_le_counter
+│   │   └── CMakeLists.txt
+│   ├── nordic_spp_le_streamer
+│   │   └── CMakeLists.txt
+│   ├── pan_lwip_http_server
+│   │   └── CMakeLists.txt
+│   ├── pbap_client_demo
+│   │   └── CMakeLists.txt
+│   ├── picow_bt_example_background.c
+│   ├── picow_bt_example_common.c
+│   ├── picow_bt_example_common.h
+│   ├── picow_bt_example_freertos.c
+│   ├── picow_bt_example_poll.c
+│   ├── sdp_bnep_query
+│   │   └── CMakeLists.txt
+│   ├── sdp_general_query
+│   │   └── CMakeLists.txt
+│   ├── sdp_rfcomm_query
+│   │   └── CMakeLists.txt
+│   ├── sine_player
+│   │   └── CMakeLists.txt
+│   ├── sm_pairing_central
+│   │   └── CMakeLists.txt
+│   ├── sm_pairing_peripheral
+│   │   └── CMakeLists.txt
+│   ├── spp_and_gatt_counter
+│   │   └── CMakeLists.txt
+│   ├── spp_and_gatt_streamer
+│   │   └── CMakeLists.txt
+│   ├── spp_counter
+│   │   └── CMakeLists.txt
+│   ├── spp_flowcontrol
+│   │   └── CMakeLists.txt
+│   ├── spp_streamer
+│   │   └── CMakeLists.txt
+│   ├── spp_streamer_client
+│   │   └── CMakeLists.txt
+│   ├── spp_streamer_with_wifi
+│   │   └── CMakeLists.txt
+│   ├── standalone
+│   │   ├── btstack_config.h
+│   │   ├── client.c
+│   │   ├── CMakeLists.txt
+│   │   ├── lwipopts.h
+│   │   ├── server.c
+│   │   ├── server_common.c
+│   │   ├── server_common.h
+│   │   ├── server_with_wifi.c
+│   │   └── temp_sensor.gatt
+│   └── ublox_spp_le_counter
+│       └── CMakeLists.txt
+├── CMakeLists.txt
+└── wifi
+    ├── access_point
+    │   ├── CMakeLists.txt
+    │   ├── dhcpserver
+    │   │   ├── dhcpserver.c
+    │   │   ├── dhcpserver.h
+    │   │   └── LICENSE
+    │   ├── dnsserver
+    │   │   ├── dnsserver.c
+    │   │   └── dnsserver.h
+    │   ├── lwipopts.h
+    │   └── picow_access_point.c
+    ├── blink
+    │   ├── CMakeLists.txt
+    │   └── picow_blink.c
+    ├── CMakeLists.txt
+    ├── freertos
+    │   ├── CMakeLists.txt
+    │   ├── FreeRTOS_Kernel_import.cmake
+    │   ├── iperf
+    │   │   ├── CMakeLists.txt
+    │   │   ├── FreeRTOSConfig.h
+    │   │   ├── lwipopts.h
+    │   │   └── picow_freertos_iperf.c
+    │   └── ping
+    │       ├── CMakeLists.txt
+    │       ├── FreeRTOSConfig.h
+    │       ├── lwipopts.h
+    │       └── picow_freertos_ping.c
+    ├── iperf
+    │   ├── CMakeLists.txt
+    │   ├── lwipopts.h
+    │   └── picow_iperf.c
+    ├── lwipopts_examples_common.h
+    ├── ntp_client
+    │   ├── CMakeLists.txt
+    │   ├── lwipopts.h
+    │   └── picow_ntp_client.c
+    ├── python_test_tcp
+    │   ├── micropython_test_tcp_client.py
+    │   ├── micropython_test_tcp_server.py
+    │   ├── python_test_tcp_client.py
+    │   └── python_test_tcp_server.py
+    ├── tcp_client
+    │   ├── CMakeLists.txt
+    │   ├── lwipopts.h
+    │   └── picow_tcp_client.c
+    ├── tcp_server
+    │   ├── CMakeLists.txt
+    │   ├── lwipopts.h
+    │   └── picow_tcp_server.c
+    ├── tls_client
+    │   ├── CMakeLists.txt
+    │   ├── lwipopts.h
+    │   ├── mbedtls_config.h
+    │   └── picow_tls_client.c
+    ├── udp_beacon
+    │   ├── CMakeLists.txt
+    │   ├── lwipopts.h
+    │   └── picow_udp_beacon.c
+    └── wifi_scan
+        ├── CMakeLists.txt
+        ├── lwipopts.h
+        └── picow_wifi_scan.c
+system/
+├── CMakeLists.txt
+├── hello_double_tap
+│   ├── CMakeLists.txt
+│   └── hello_double_tap.c
+├── narrow_io_write
+│   ├── CMakeLists.txt
+│   └── narrow_io_write.c
+└── unique_board_id
+    ├── CMakeLists.txt
+    └── unique_board_id.c
+
+76 directories, 134 files
