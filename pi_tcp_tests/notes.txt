@@ -1,0 +1,42 @@
+gcc server.c -o server
+
+./server
+
+Socket created successfully
+Done with binding
+
+Listening for incoming connections.....
+
+gcc client.c -o client
+
+./client
+Socket created successfully
+Connected with server successfully
+1
+Server's response: 
+2
+Server's response: 
+3
+Server's response: 
+4
+Server's response: 
+1
+Server's response:
+
+
+Listening for incoming connections.....
+Client connected at IP: 192.168.1.212 and port: 39470
+Msg from client: 012345678901234567890123456789
+
+Msg from client: 012345678901234567890123456789abcdef
+
+Msg from client: 012345678901234567890123456789ghijklmno
+
+Msg from client: 012345678901234567890123456789pqrstuvwxyz
+
+Msg from client: 012345678901234567890123456789
+qrstuvwxyz
+
+Msg from client: 012345678901234567890123456789abcdef
+wxyz
+
