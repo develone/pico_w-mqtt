@@ -1,0 +1,61 @@
+Testing tcp_server running on WiFi "your_wifi_ssid" as remote1 "pico_w-server-ip" on pi4-50
+
+tcp_client running on WiFi "your_wifi_ssid" as remote2 "pico_w-server-ip" on pi4-60
+
+pi4-50
+
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote1" -DTEST_TCP_SERVER_IP="pico_w-server-ip" -DWIFI_SSID="your_wifi_ssid" -DWIFI_PASSWORD="your_wifi_password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+
+pico_w-mqtt/remote2/pico_w/wifi/tcp_server
+
+make
+
+openocd -f interface/raspberrypi-swd.cfg -f target/rp2040.cfg -c "program pico_w/wifi/tcp_server/picow_tcpip_server_background.elf verify reset exit"
+
+Connecting to Wi-Fi...                                                          
+Connected.                                                                      
+Starting server at pico_w-server-ip on port 4242
+
+pi4-60
+
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote2" -DTEST_TCP_SERVER_IP="pico_w-server-ip" -DWIFI_SSID="your_wifi_ssid" -DWIFI_PASSWORD="your_wifi_password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+
+pico_w-mqtt/remote2/pico_w/wifi/tcp_client
+
+make
+
+openocd -f interface/raspberrypi-swd.cfg -f target/rp2040.cfg -c "program pico_w/wifi/tcp_client/picow_tcpip_client_background.elf verify reset exit"
+
+Connecting to Wi-Fi...                                                          
+Connected.                                                                      
+Connecting to pico_w-server-ip port 4242                                          
+Waiting for buffer from server                                                  
+recv 1460 err 0                                                                 
+recv 588 err 0                                                                  
+Writing 2048 bytes to server                                                    
+tcp_client_sent 1460                                                            
+tcp_client_sent 588                                                             
+Waiting for buffer from server                                                  
+recv 1460 err 0                                                                 
+recv 588 err 0                                                                  
+Writing 2048 bytes to server                                                    
+tcp_client_sent 1460                                                            
+tcp_client_sent 588             
+	.
+	.
+	.
+Waiting for buffer from server                                                  
+recv 1460 err 0                                                                 
+recv 588 err 0                                                                  
+Writing 2048 bytes to server                                                    
+tcp_client_sent 1460                                                            
+tcp_client_sent 588                                                             
+test success
+
+sudo cat /var/lib/misc/dnsmasq.leases
+pico_w-client-ip remote2 *
+pico_w-server-ip remote1 *
+
+
+
+
