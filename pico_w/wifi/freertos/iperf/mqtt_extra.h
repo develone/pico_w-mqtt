@@ -6,6 +6,19 @@ extern "C" {
 #endif
 
 //void mqtt_example_init(void);
+/**************************ping**************************/
+//#include "ping.h"
+
+/**
+ * PING_DEBUG: Enable debugging for PING.
+ */
+#ifndef PING_DEBUG
+#define PING_DEBUG     LWIP_DBG_ON
+#endif
+#ifndef PING_ADDR
+#define PING_ADDR "142.251.35.196"
+#endif
+/**************************ping**************************/
 
 /**************************tcp_server**************************/
 #include <string.h>
@@ -21,9 +34,9 @@ static u8_t check_mqtt_connected;
 static u8_t check_wifi_connected;
 static u8_t wifi_connected = 1;
 
-#define TCP_PORT 4242
+#define TCP_PORT 4001
 #define DEBUG_printf printf
-#define BUF_SIZE 2048
+#define BUF_SIZE 256
 #define TEST_ITERATIONS 10
 #define POLL_TIME_S 5
 
@@ -110,7 +123,7 @@ err_t tcp_server_send_data(void *arg, struct tcp_pcb *tpcb)
     // this method is callback from lwIP, so cyw43_arch_lwip_begin is not required, however you
     // can use this method to cause an assertion in debug mode, if this method is called when
     // cyw43_arch_lwip_begin IS needed
-    cyw43_arch_lwip_check();
+    //cyw43_arch_lwip_check();
     err_t err = tcp_write(tpcb, state->buffer_sent, BUF_SIZE, TCP_WRITE_FLAG_COPY);
     if (err != ERR_OK) {
         DEBUG_printf("Failed to write data %d\n", err);
@@ -127,7 +140,7 @@ err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err
     // this method is callback from lwIP, so cyw43_arch_lwip_begin is not required, however you
     // can use this method to cause an assertion in debug mode, if this method is called when
     // cyw43_arch_lwip_begin IS needed
-    cyw43_arch_lwip_check();
+    //cyw43_arch_lwip_check();
     if (p->tot_len > 0) {
         DEBUG_printf("tcp_server_recv %d/%d err %d\n", p->tot_len, state->recv_len, err);
 

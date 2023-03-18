@@ -70,8 +70,11 @@ void main_task(__unused void *params) {
         exit(1);
     } else {
         printf("Connected.\n");
+    	ip_addr_t ping_addr;
+    	ipaddr_aton(PING_ADDR, &ping_addr);
+    	//ping_init(&ping_addr);
     }
-
+	run_tcp_server_test();
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
 
     cyw43_arch_lwip_begin();
@@ -81,8 +84,8 @@ void main_task(__unused void *params) {
     ip4_addr_set_u32(&clientaddr, ipaddr_addr(xstr(IPERF_SERVER_IP)));
     assert(lwiperf_start_tcp_client_default(&clientaddr, &iperf_report, NULL) != NULL);
 #else
-    printf("\nReady, running iperf server at %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
-    lwiperf_start_tcp_server_default(&iperf_report, NULL);
+    //printf("\nReady, running iperf server at %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
+    //lwiperf_start_tcp_server_default(&iperf_report, NULL);
 #endif
     cyw43_arch_lwip_end();
 

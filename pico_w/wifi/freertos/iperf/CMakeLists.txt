@@ -1,5 +1,7 @@
 add_executable(picow_freertos_iperf_server_nosys
         picow_freertos_iperf.c
+		ping.c
+		ping.h
         )
 target_compile_definitions(picow_freertos_iperf_server_nosys PRIVATE
         WIFI_SSID=\"${WIFI_SSID}\"

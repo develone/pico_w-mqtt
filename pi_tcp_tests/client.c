@@ -2,12 +2,29 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#ifdef rem1
+	#define port 4001
+	#define ip "192.168.17.116"
+#endif
+#ifdef rem2
+	#define port 4002
+	#define ip "192.168.17.102"
+#endif
+#ifdef rem5
+	#define port 4005
+	#define ip "192.168.17.106"
+#endif
+#ifdef rem6
+	#define port 4006
+	#define ip "192.168.17.114"
+#endif
+
 
 int main(void)
 {
     int socket_desc,flag=1,userflg,msg;
     struct sockaddr_in server_addr;
-    char server_message[2048], client_message[2048];
+    char server_message[256], client_message[256];
     
     // Clean buffers:
     memset(server_message,'\0',sizeof(server_message));
@@ -25,8 +42,8 @@ int main(void)
     
     // Set port and IP the same as server-side:
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(5050);
-    server_addr.sin_addr.s_addr = inet_addr("192.168.1.212");
+    server_addr.sin_port = htons(port);
+    server_addr.sin_addr.s_addr = inet_addr(ip);
     
     // Send connection request to server:
     if(connect(socket_desc, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0){

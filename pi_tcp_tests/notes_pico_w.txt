@@ -56,6 +56,27 @@ sudo cat /var/lib/misc/dnsmasq.leases
 pico_w-client-ip remote2 *
 pico_w-server-ip remote1 *
 
+Pico_w-Net	pi4-50
+192.168.17.116	remote1		cli_remote1		pi4-50
+192.168.17.102	remote2		cli_remote2		pi4-20
+
+
+192.168.17.106	remote5		cli_remote5		pi4-30
+192.168.17.114	remote6		cli_remote1		pi4-60
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote1" -DTEST_TCP_SERVER_IP="192.168.17.116" -DWIFI_SSID="Pico_w-Net" -DWIFI_PASSWORD="abdcda5860" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+gcc -v client.c -Drem1  -o cli1
+gcc -v client.c -Drem2  -o cli2
+
+
+gcc -v client.c -Drem5  -o cli5
+gcc -v client.c -Drem6  -o cli6
+
+./build_cli.sh
+pi_tcp_tests/clix where x is remote1, remote2, remote3, remote4, remote5 or remote6
+ sudo cat /var/lib/misc/dnsmasq.leases
+ 
+
+
 
 
 
