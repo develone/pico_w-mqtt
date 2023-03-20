@@ -12,12 +12,12 @@ extern "C" {
 /**
  * PING_DEBUG: Enable debugging for PING.
  */
-#ifndef PING_DEBUG
-#define PING_DEBUG     LWIP_DBG_ON
-#endif
-#ifndef PING_ADDR
-#define PING_ADDR "142.251.35.196"
-#endif
+//#ifndef PING_DEBUG
+//#define PING_DEBUG     LWIP_DBG_ON
+//#endif
+//#ifndef PING_ADDR
+//#define PING_ADDR "142.251.35.196"
+//#endif
 /**************************ping**************************/
 
 /**************************tcp_server**************************/
