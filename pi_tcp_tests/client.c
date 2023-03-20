@@ -3,20 +3,20 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #ifdef rem1
-	#define port 4001
-	#define ip "192.168.17.116"
+ 
+	#define ip "192.168.1.176"
 #endif
 #ifdef rem2
-	#define port 4002
-	#define ip "192.168.17.102"
+ 
+	#define ip "192.168.1.160"
 #endif
 #ifdef rem5
-	#define port 4005
-	#define ip "192.168.17.106"
+ 
+	#define ip "192.168.1.159"
 #endif
 #ifdef rem6
-	#define port 4006
-	#define ip "192.168.17.114"
+ 
+	#define ip "192.168.1.175"
 #endif
 
 
@@ -42,7 +42,7 @@ int main(void)
     
     // Set port and IP the same as server-side:
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port);
+    server_addr.sin_port = htons(4001);
     server_addr.sin_addr.s_addr = inet_addr(ip);
     
     // Send connection request to server:
