@@ -20,6 +20,7 @@
 #define RUN_FREERTOS_ON_CORE 0
 #endif
 
+#define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
 #define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
 
@@ -39,6 +40,25 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 
     printf("Completed iperf transfer of %d MBytes @ %.1f Mbits/sec\n", mbytes, mbits);
     printf("Total iperf megabytes since start %d Mbytes\n", total_iperf_megabytes);
+}
+
+void socket_task(__unused void *params) {
+	printf("socket_task starts\n");
+    TCP_SERVER_T *state = tcp_server_init();
+    if (!state) {
+        return;
+    }
+    if (!tcp_server_open(state)) {
+        tcp_server_result(state, -1);
+        return;
+    }
+    
+
+    while (true) {
+		while(!state->complete) {
+        	vTaskDelay(200);
+		}
+    }
 }
 
 void blink_task(__unused void *params) {
@@ -70,12 +90,13 @@ void main_task(__unused void *params) {
         exit(1);
     } else {
         printf("Connected.\n");
-    	ip_addr_t ping_addr;
-    	ipaddr_aton(PING_ADDR, &ping_addr);
+    	//ip_addr_t ping_addr;
+    	//ipaddr_aton(PING_ADDR, &ping_addr);
     	//ping_init(&ping_addr);
     }
-	run_tcp_server_test();
+	//run_tcp_server_test();
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
+    xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
@@ -84,8 +105,8 @@ void main_task(__unused void *params) {
     ip4_addr_set_u32(&clientaddr, ipaddr_addr(xstr(IPERF_SERVER_IP)));
     assert(lwiperf_start_tcp_client_default(&clientaddr, &iperf_report, NULL) != NULL);
 #else
-    //printf("\nReady, running iperf server at %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
-    //lwiperf_start_tcp_server_default(&iperf_report, NULL);
+    printf("\nReady, running iperf server at %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
+    lwiperf_start_tcp_server_default(&iperf_report, NULL);
 #endif
     cyw43_arch_lwip_end();
 
