@@ -10,6 +10,14 @@
  
 	#define ip "192.168.1.160"
 #endif
+#ifdef rem3
+ 
+	#define ip "192.168.1.178"
+#endif
+#ifdef rem4
+ 
+	#define ip "192.168.1.177"
+#endif
 #ifdef rem5
  
 	#define ip "192.168.1.159"
