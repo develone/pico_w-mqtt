@@ -55,9 +55,20 @@ void socket_task(__unused void *params) {
     
 
     while (true) {
-		while(!state->complete) {
-        	vTaskDelay(200);
+		if(state->complete) {
+			free(state);
+			sleep_ms(1000);
+			TCP_SERVER_T *state = tcp_server_init();
+    		if (!state) {
+        		return;
+    		}
+    		if (!tcp_server_open(state)) {
+        		tcp_server_result(state, -1);
+        		return;
+         	}
 		}
+        vTaskDelay(200);
+		
     }
 }
 

@@ -73,11 +73,11 @@ int main(void)
             printf("%d\n",msg);
             
  
-                if(msg==1) sprintf(client_message,"012345678901234567890123456789\n");
-                if(msg==2) sprintf(client_message,"012345678901234567890123456789abcdef\n");
-                if(msg==3) sprintf(client_message,"012345678901234567890123456789ghijklmno\n");
-                if(msg==4) sprintf(client_message,"012345678901234567890123456789pqrstuvwxyz\n");
-            
+                if(msg==1) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
+                if(msg==2) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
+                if(msg==3) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
+                if(msg==4) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
+
             msg= msg + 1;
             if(msg==5) msg=1;
             sleep(1);
