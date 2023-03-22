@@ -144,7 +144,7 @@ err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err
     //cyw43_arch_lwip_check();
     if (p->tot_len > 0) {
         DEBUG_printf("tcp_server_recv %d/%d err %d\n", p->tot_len, state->recv_len, err);
-
+        DEBUG_printf("RPi sent  %s\n",state->buffer_recv);
         // Receive the buffer
         const uint16_t buffer_left = BUF_SIZE - state->recv_len;
         state->recv_len += pbuf_copy_partial(p, state->buffer_recv + state->recv_len,
