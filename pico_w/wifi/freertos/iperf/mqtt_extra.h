@@ -21,6 +21,7 @@ extern "C" {
 /**************************ping**************************/
 
 /**************************tcp_server**************************/
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -39,7 +40,7 @@ static u8_t wifi_connected = 1;
 #define BUF_SIZE 256
 #define TEST_ITERATIONS 1
 #define POLL_TIME_S 5
-
+char client_message[BUF_SIZE];
 typedef struct TCP_SERVER_T_ {
     struct tcp_pcb *server_pcb;
     struct tcp_pcb *client_pcb;
@@ -115,7 +116,7 @@ err_t tcp_server_send_data(void *arg, struct tcp_pcb *tpcb)
 {
     TCP_SERVER_T *state = (TCP_SERVER_T*)arg;
     for(int i=0; i< BUF_SIZE; i++) {
-        state->buffer_sent[i] = rand();
+        state->buffer_sent[i] = client_message[i];
     }
 
     state->sent_len = 0;
