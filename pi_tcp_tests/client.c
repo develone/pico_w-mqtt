@@ -30,9 +30,9 @@
 
 int main(void)
 {
-    int socket_desc,flag=1,userflg,msg;
+    int socket_desc,flag=1,userflg,msg,buff_size=256;
     struct sockaddr_in server_addr;
-    char server_message[256], client_message[256];
+    char server_message[buff_size], client_message[buff_size];
     
     // Clean buffers:
     memset(server_message,'\0',sizeof(server_message));
@@ -59,6 +59,7 @@ int main(void)
         return -1;
     }
     printf("Connected with server successfully\n");
+	recv(socket_desc, server_message, buff_size, 0);
     userflg=1;
     msg=1;
     while(flag) {
