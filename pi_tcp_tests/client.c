@@ -60,6 +60,7 @@ int main(void)
     }
     printf("Connected with server successfully\n");
 	recv(socket_desc, server_message, buff_size, 0);
+	printf("%s\n",server_message);
     userflg=1;
     msg=1;
     while(flag) {
@@ -71,13 +72,13 @@ int main(void)
             gets(client_message);
         }
         else {
-            printf("%d\n",msg);
+            //printf("%d\n",msg);
             
  
-                if(msg==1) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
-                if(msg==2) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
-                if(msg==3) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
-                if(msg==4) sprintf(client_message,"0123456789012345678901234567890012345678901234567890123456789012");
+                if(msg==1) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
+                if(msg==2) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
+                if(msg==3) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
+                if(msg==4) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
 
             msg= msg + 1;
             if(msg==5) msg=1;
@@ -95,7 +96,7 @@ int main(void)
             return -1;
         }*/
     
-        printf("Server's response: %s\n",server_message);
+        //printf("Server's response: %s\n",server_message);
     }
     
     // Close the socket:
