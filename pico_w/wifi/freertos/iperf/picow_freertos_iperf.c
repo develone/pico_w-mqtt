@@ -15,11 +15,13 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
 #ifndef RUN_FREERTOS_ON_CORE
 #define RUN_FREERTOS_ON_CORE 0
 #endif
 
+
+
+  
 #define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
 #define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
@@ -42,8 +44,10 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
     printf("Total iperf megabytes since start %d Mbytes\n", total_iperf_megabytes);
 }
 
+
 void socket_task(__unused void *params) {
-	printf("socket_task starts\n");
+	
+	//printf("socket_task starts\n");
     TCP_SERVER_T *state = tcp_server_init();
     if (!state) {
         return;
@@ -67,6 +71,7 @@ void socket_task(__unused void *params) {
         		return;
          	}
 		}
+
         vTaskDelay(200);
 		
     }
@@ -74,7 +79,7 @@ void socket_task(__unused void *params) {
 
 void blink_task(__unused void *params) {
     bool on = false;
-    printf("blink_task starts\n");
+    //printf("blink_task starts\n");
     while (true) {
 #if 0 && configNUM_CORES > 1
         static int last_core_id;
@@ -85,6 +90,7 @@ void blink_task(__unused void *params) {
 #endif
         cyw43_arch_gpio_put(0, on);
         on = !on;
+
         vTaskDelay(200);
     }
 }
@@ -96,11 +102,15 @@ void main_task(__unused void *params) {
     }
     cyw43_arch_enable_sta_mode();
     printf("Connecting to Wi-Fi...\n");
+	sprintf(tmp,"Connecting to Wi-Fi...\n");
+	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
         printf("failed to connect.\n");
         exit(1);
     } else {
         printf("Connected.\n");
+ 		sprintf(tmp,"Connected.\n");
+		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     	//ip_addr_t ping_addr;
     	//ipaddr_aton(PING_ADDR, &ping_addr);
     	//ping_init(&ping_addr);
@@ -108,6 +118,7 @@ void main_task(__unused void *params) {
 	//run_tcp_server_test();
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
     xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
+
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
@@ -123,6 +134,7 @@ void main_task(__unused void *params) {
 
     while(true) {
         // not much to do as LED is in another task, and we're using RAW (callback) lwIP API
+ 
         vTaskDelay(10000);
     }
 
@@ -132,6 +144,7 @@ void main_task(__unused void *params) {
 void vLaunch( void) {
     TaskHandle_t task;
     xTaskCreate(main_task, "TestMainThread", configMINIMAL_STACK_SIZE, NULL, TEST_TASK_PRIORITY, &task);
+	
 
 #if NO_SYS && configUSE_CORE_AFFINITY && configNUM_CORES > 1
     // we must bind the main task to one core (well at least while the init is called)
@@ -144,9 +157,26 @@ void vLaunch( void) {
     vTaskStartScheduler();
 }
 
+
+
+void preptopidata() {
+sprintf(client_message,"0123456789012345678901234567890123456789012345678901234567890123\
+012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345\
+6789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901\n");
+ 
+}
+
 int main( void )
 {
     stdio_init_all();
+	preptopidata();
+	
+	head = (char *)&client_message[0];
+	tail = (char *)&client_message[0];
+	topofbuf = (char *)&client_message[0];
+	endofbuf = (char *)&client_message[BUF_SIZE-1];
+	// printf("0x%x 0x%x 0x%x 0x%x \n", head, tail, endofbuf, topofbuf);
+	
 
     /* Configure the hardware ready to run the demo. */
     const char *rtos_name;
@@ -164,7 +194,9 @@ int main( void )
     multicore_launch_core1(vLaunch);
     while (true);
 #else
-    printf("Starting %s on core 0:\n", rtos_name);
+	printf("Starting %s on core 0:\n", rtos_name);
+	sprintf(tmp,"Starting %s on core 0:\n", rtos_name);
+	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     vLaunch();
 #endif
     return 0;

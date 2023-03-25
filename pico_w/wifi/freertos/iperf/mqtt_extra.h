@@ -35,6 +35,9 @@ static u8_t check_mqtt_connected;
 static u8_t check_wifi_connected;
 static u8_t wifi_connected = 1;
 
+
+#define debug_level 
+
 #define TCP_PORT 4001
 #define DEBUG_printf printf
 #define BUF_SIZE 256
@@ -90,8 +93,13 @@ static err_t tcp_server_result(void *arg, int status) {
     TCP_SERVER_T *state = (TCP_SERVER_T*)arg;
     if (status == 0) {
         DEBUG_printf("test success\n");
+		//sprintf(tmp,"test success\n");
+		//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     } else {
         DEBUG_printf("test failed %d\n", status);
+		//sprintf(tmp,"test success\n");
+		//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+
     }
     state->complete = true;
     return tcp_server_close(arg);
@@ -267,6 +275,108 @@ void run_tcp_server_test(void) {
     free(state);
 }
 /**************************tcp_server**************************/
+
+/**************************head-tail**************************/
+
+char tmp[80];
+char * head;
+char * tail;
+char * endofbuf;
+char * topofbuf;
+
+char * bump_head(char * head, char * endofbuf,char * topofbuf);
+char * bump_tail(char * tail,char * endofbuf,char * topofbuf);
+char * dec_head(char * head,char * endofbuf,char * topofbuf);
+char * dec_tail(char * tail,char * endofbuf,char * topofbuf);
+char * head_tail_helper(char * head, char * tail,char * endofbuf,char * topofbuf, char * inpstr);
+
+char * head_tail_helper(char * head, char * tail, char * endofbuf,char * topofbuf, char * inpstr) {
+	
+	u8_t loop = 0;
+	u8_t tstlen = 0;
+	//printf("0x%x 0x%x 0x%x 0x%x \n", head, tail, endofbuf, topofbuf);
+	//printf("%s\n", inpstr);
+	tstlen = strlen(inpstr);
+	// printf("%d %d \n", loop,tstlen);
+	
+	for(loop=0;loop< tstlen; loop++) {
+		*head = inpstr[loop];
+		// printf("head 0x%x head 0x%x E 0x%x  T 0x%x \n", *head,head, endofbuf, topofbuf);
+		
+		head = bump_head(head, endofbuf, topofbuf);
+		// printf("head 0x%x head 0x%x E 0x%x  T 0x%x \n", *head,head, endofbuf, topofbuf);
+		
+	}
+	// printf("head 0x%x head 0x%x E 0x%x  T 0x%x \n", *head,head, endofbuf, topofbuf);
+	
+	return ((char *)head);
+}
+ 
+char * bump_head(char * head, char * endofbuf,char * topofbuf) {
+ 
+	if(head == endofbuf) {
+
+		
+			// printf("head == endofbuf\n");
+			
+			head = topofbuf;
+	}
+	else {
+		// printf("head < endofbuf\n");
+		
+		head = head + 1;
+	}
+ 
+	
+	return((char *)head);
+}
+char * bump_tail(char * tail,char * endofbuf,char * topofbuf) {
+	
+	if(tail == endofbuf) {
+
+		
+			// printf("tail == endofbuf\n");
+			
+			tail = topofbuf;
+	}
+	else {
+		// printf("tail < endofbuf\n");
+		
+		tail = tail + 1;
+	}
+ 
+	
+	return((char *)tail);
+}
+char * dec_head(char * head,char * endofbuf,char * topofbuf) {
+	if(head == topofbuf) {
+			// printf("head == topofbuf\n");
+			
+			//head = topofbuf;
+	}
+	else {
+		//printf("head < topofbuf\n");
+		head = head - 1;
+	}
+
+	return((char *)head);
+}
+char * dec_tail(char * tail,char * endofbuf,char * topofbuf) {
+	if(tail == topofbuf) {
+			printf("tail == topofbuf\n");
+			head = topofbuf;
+	}
+	else {
+		printf("tail < topofbuf\n");
+		tail = tail - 1;
+	}
+
+	return((char *)tail); 
+}
+
+
+/**************************head-tail**************************/
+
 
 #ifdef __cplusplus
 }
