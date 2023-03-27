@@ -4,5 +4,5 @@ else()
     include(FreeRTOS_Kernel_import.cmake)
 
     add_subdirectory(iperf)
-    add_subdirectory(ping)
+    #add_subdirectory(ping)
 endif()
