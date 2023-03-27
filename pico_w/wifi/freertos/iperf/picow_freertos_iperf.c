@@ -109,7 +109,7 @@ void main_task(__unused void *params) {
         exit(1);
     } else {
         printf("Connected.\n");
- 		sprintf(tmp,"Connected.\n");
+ 		sprintf(tmp,"Connected. iperf server %s %u \n",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
 		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     	//ip_addr_t ping_addr;
     	//ipaddr_aton(PING_ADDR, &ping_addr);
@@ -195,7 +195,7 @@ int main( void )
     while (true);
 #else
 	printf("Starting %s on core 0:\n", rtos_name);
-	sprintf(tmp,"Starting %s on core 0:\n", rtos_name);
+	sprintf(tmp,"Starting %s on core 0: %s\n", rtos_name,CYW43_HOST_NAME);
 	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     vLaunch();
 #endif
