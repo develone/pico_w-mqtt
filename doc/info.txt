@@ -1,0 +1,81 @@
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli1
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: remote1
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.176 4001 
+012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli2
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: remote2
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.160 4001 
+012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli3
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: remote3
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.178 4001 
+012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli4
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: remote4
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.177 4001 
+012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: remote5
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.159 4001 
+012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+
+devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote1
+------------------------------------------------------------
+Client connecting to remote1, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.1.212 port 53772 connected with 192.168.1.176 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-10.0071 sec  20.0 MBytes  16.8 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote2
+------------------------------------------------------------
+Client connecting to remote2, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.1.212 port 49616 connected with 192.168.1.160 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-10.0217 sec  19.3 MBytes  16.1 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote3
+------------------------------------------------------------
+Client connecting to remote3, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.1.212 port 35636 connected with 192.168.1.178 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-10.0314 sec  19.9 MBytes  16.6 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote4
+------------------------------------------------------------
+Client connecting to remote4, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.1.212 port 44592 connected with 192.168.1.177 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-10.0444 sec  19.8 MBytes  16.5 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote5
+------------------------------------------------------------
+Client connecting to remote5, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.1.212 port 43092 connected with 192.168.1.159 port 5001
+client await server close failed: Resource temporarily unavailable
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-15.1222 sec  17.9 MBytes  9.95 Mbits/sec
