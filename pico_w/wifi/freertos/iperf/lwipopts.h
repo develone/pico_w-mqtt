@@ -6,7 +6,7 @@
 //
 // This example uses a common include to avoid repetition
 #include "lwipopts_examples_common.h"
-
+#define MEMP_NUM_SYS_TIMEOUT   (LWIP_NUM_SYS_TIMEOUT_INTERNAL + 1)
 #if !NO_SYS
 #define TCPIP_THREAD_STACKSIZE 1024
 #define DEFAULT_THREAD_STACKSIZE 1024

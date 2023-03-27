@@ -20,7 +20,7 @@
 #endif
 
 
-
+#define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
   
 #define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
@@ -45,6 +45,17 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 }
 
 
+void watchdog_task(__unused void *params) {
+    //bool on = false;
+    printf("watchdog_task starts\n");
+    watchdog_enable(10000, 1);
+    while (true) {
+	 
+	watchdog_update();
+ 
+       vTaskDelay(200);
+    }
+}
 void socket_task(__unused void *params) {
 	
 	//printf("socket_task starts\n");
@@ -111,11 +122,14 @@ void main_task(__unused void *params) {
         printf("Connected.\n");
  		sprintf(tmp,"Connected. iperf server %s %u \n",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
 		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+		sprintf(tmp,"starting watchdog timer task\n");
+		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     	//ip_addr_t ping_addr;
     	//ipaddr_aton(PING_ADDR, &ping_addr);
     	//ping_init(&ping_addr);
     }
 	//run_tcp_server_test();
+	xTaskCreate(watchdog_task, "WatchdogThread", configMINIMAL_STACK_SIZE, NULL, WATCHDOG_TASK_PRIORITY, NULL);
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
     xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
 
