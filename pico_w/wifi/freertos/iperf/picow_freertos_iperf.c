@@ -23,28 +23,32 @@
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
-#include "mqtt_example.h"
 #include "lwip/apps/mqtt.h"
 #include "mqtt_example.h"
+#define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
+#define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
+#define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
+#define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
+#define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
+
 mqtt_request_cb_t pub_mqtt_request_cb_t;  
 u16_t mqtt_port = 1883;
  
-#if LWIP_TCP
+#if LWIP_TCP /*LWIP_TCP*/
 
 	/** Define this to a compile-time IP address initialization
 	 * to connect anything else than IPv4 loopback
 	 */
 	#ifndef LWIP_MQTT_EXAMPLE_IPADDR_INIT
-		#if LWIP_IPV4
+	#if LWIP_IPV4 /*LWIP_IPV4*/
 
 			/*192.168.1.212 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-50*/
 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801d4))
 
-		#else
+	#else
 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT
-		#endif
 	#endif
-#endif
+	#endif
 
 char PUB_PAYLOAD[] = "this is a message from pico_w ctrl 0       ";
 char PUB_PAYLOAD_SCR[] = "this is a message from pico_w ctrl 0       ";
@@ -97,12 +101,60 @@ mqtt_request_cb(void *arg, err_t err)
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" request cb: err %d\n", client_info->client_id, (int)err));
 }
+static void
+mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status)
+{
+  const struct mqtt_connect_client_info_t* client_info = (const struct mqtt_connect_client_info_t*)arg;
+  LWIP_UNUSED_ARG(client);
 
-#define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
-#define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
-#define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
-#define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
-#define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
+  LWIP_PLATFORM_DIAG(("MQTT client \"%s\" connection cb: status %d\n", client_info->client_id, (int)status));
+
+  if (status == MQTT_CONNECT_ACCEPTED) {
+    mqtt_sub_unsub(client,
+            "topic_qos1", 1,
+            mqtt_request_cb, LWIP_CONST_CAST(void*, client_info),
+            1);
+    mqtt_sub_unsub(client,
+            "topic_qos0", 0,
+            mqtt_request_cb, LWIP_CONST_CAST(void*, client_info),
+            1);
+  }
+}
+#endif /*LWIP_TCP*/
+
+void
+mqtt_example_init(void)
+{
+#if LWIP_TCP
+  mqtt_client = mqtt_client_new();
+  printf("mqtt_client 0x%x &mqtt_client 0x%x \n", mqtt_client,&mqtt_client);	
+  saved_mqtt_client = mqtt_client;
+  printf("saved_mqtt_client 0x%x mqtt_client 0x%x \n", saved_mqtt_client,mqtt_client);
+  mqtt_set_inpub_callback(mqtt_client,
+          mqtt_incoming_publish_cb,
+          mqtt_incoming_data_cb,
+          LWIP_CONST_CAST(void*, &mqtt_client_info));
+  printf("mqtt_set_inpub_callback 0x%x\n",mqtt_set_inpub_callback);
+  
+
+  mqtt_connected = mqtt_client_connect(mqtt_client,
+          &mqtt_ip, mqtt_port,
+          mqtt_connection_cb, LWIP_CONST_CAST(void*, &mqtt_client_info),
+          &mqtt_client_info);
+  printf("mqtt_client_connect 0x%x\n",mqtt_client_connect);
+
+ 
+  //printf("0x%x \n",LWIP_CONST_CAST(void*, &mqtt_client_info));
+/*
+  strcpy(PUB_PAYLOAD_SCR,PUB_PAYLOAD);
+  strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
+  payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
+  printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
+  mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
+*/   
+          
+#endif /* LWIP_TCP */
+}
 
 #if CLIENT_TEST && !defined(IPERF_SERVER_IP)
 #error IPERF_SERVER_IP not defined
@@ -247,7 +299,7 @@ void main_task(__unused void *params) {
     	//ipaddr_aton(PING_ADDR, &ping_addr);
     	//ping_init(&ping_addr);
     }
-	//run_tcp_server_test();
+	 
 	//xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
 
 	xTaskCreate(watchdog_task, "WatchdogThread", configMINIMAL_STACK_SIZE, NULL, WATCHDOG_TASK_PRIORITY, NULL);
