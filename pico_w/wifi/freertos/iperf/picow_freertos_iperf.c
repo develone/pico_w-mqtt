@@ -23,15 +23,16 @@
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
-#include "lwip/apps/mqtt.h"
-#include "mqtt_example.h"
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
 #define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
 #define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
 #define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
 
-mqtt_request_cb_t pub_mqtt_request_cb_t;  
+#include "lwip/apps/mqtt.h"
+#include "mqtt_example.h"
+mqtt_request_cb_t pub_mqtt_request_cb_t; 
+  
 u16_t mqtt_port = 1883;
  
 #if LWIP_TCP /*LWIP_TCP*/
@@ -54,11 +55,10 @@ char PUB_PAYLOAD[] = "this is a message from pico_w ctrl 0       ";
 char PUB_PAYLOAD_SCR[] = "this is a message from pico_w ctrl 0       ";
 char PUB_EXTRA_ARG[] = "test";
 u16_t payload_size;
+
+static ip_addr_t mqtt_ip LWIP_MQTT_EXAMPLE_IPADDR_INIT;
 static mqtt_client_t* mqtt_client;
 static mqtt_client_t* saved_mqtt_client = NULL;
-static ip_addr_t mqtt_ip LWIP_MQTT_EXAMPLE_IPADDR_INIT;
-//typedef void(* 	mqtt_connection_cb_t) (mqtt_client_t *client, void *arg, mqtt_connection_status_t status)
-//mqtt_request_cb_t pub_mqtt_request_cb_t; 
 static const struct mqtt_connect_client_info_t mqtt_client_info =
 {
   CYW43_HOST_NAME,
@@ -177,11 +177,10 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 
 void watchdog_task(__unused void *params) {
     //bool on = false;
-    printf("watchdog_task starts\n");
-    watchdog_enable(10000, 1);
+
     while (true) {
 	 
-	watchdog_update();
+	if (wifi_connected == 0) watchdog_update();
  
        vTaskDelay(200);
     }
@@ -278,28 +277,30 @@ void main_task(__unused void *params) {
         printf("failed to initialise\n");
         return;
     }
-    cyw43_arch_enable_sta_mode();
-    printf("Connecting to Wi-Fi...\n");
-	sprintf(tmp,"Connecting to Wi-Fi...\n");
-	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+	watchdog_enable(10000, 1);
+	while (wifi_connected) {
+    	cyw43_arch_enable_sta_mode();
+    	printf("Connecting to Wi-Fi...\n");
+		sprintf(tmp,"Connecting to Wi-Fi...\n");
+		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
-        printf("failed to connect.\n");
-        exit(1);
-    } else {
-        printf("Connected.\n");
- 		sprintf(tmp,"Connected. iperf server %s %u \n",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
-		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-		sprintf(tmp,"starting watchdog timer task\n");
-		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-		printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
-		printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
-		sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d \n",mqtt_ip,mqtt_port);
-		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-    	//ip_addr_t ping_addr;
-    	//ipaddr_aton(PING_ADDR, &ping_addr);
-    	//ping_init(&ping_addr);
-    }
-	 
+        	printf("failed to connect.\n");
+        	exit(1);
+    	} else {
+        	printf("Connected.\n");
+ 			sprintf(tmp,"Connected. iperf server %s %u \n",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
+			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+			sprintf(tmp,"starting watchdog timer task\n");
+			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+			printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
+			printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
+			sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d \n",mqtt_ip,mqtt_port);
+			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+			//mqtt_example_init();
+			wifi_connected = 0;
+    		 
+    	}
+	}	 
 	//xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
 
 	xTaskCreate(watchdog_task, "WatchdogThread", configMINIMAL_STACK_SIZE, NULL, WATCHDOG_TASK_PRIORITY, NULL);
@@ -348,6 +349,8 @@ void vLaunch( void) {
 
 void preptopidata() {
 sprintf(client_message,"0123456789012345678901234567890123456789012345678901234567890123\
+0123456789012345678901234567890123456789012345678901234567890123\
+0123456789012345678901234567890123456789012345678901234567890123\
 012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345\
 6789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901\n");
  

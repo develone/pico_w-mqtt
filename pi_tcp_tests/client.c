@@ -30,7 +30,7 @@
 
 int main(void)
 {
-    int socket_desc,flag=1,userflg,msg,buff_size=256;
+    int socket_desc,flag=1,userflg,msg,buff_size=384;
     struct sockaddr_in server_addr;
     char server_message[buff_size], client_message[buff_size];
     
@@ -75,8 +75,8 @@ int main(void)
             //printf("%d\n",msg);
             
  
-                if(msg==1) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
-                if(msg==2) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
+                if(msg==1) sprintf(client_message,"0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123\n");
+                if(msg==2) sprintf(client_message,"0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123\n");
                 if(msg==3) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
                 if(msg==4) sprintf(client_message,"012345678901234567890123456789012345678901234567890123456789012\n");
 

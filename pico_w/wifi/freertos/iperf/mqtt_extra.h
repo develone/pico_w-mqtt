@@ -41,7 +41,7 @@ static u8_t wifi_connected = 1;
 
 #define TCP_PORT 4001
 #define DEBUG_printf printf
-#define BUF_SIZE 256
+#define BUF_SIZE 384
 #define TEST_ITERATIONS 1
 #define POLL_TIME_S 5
 char client_message[BUF_SIZE];
