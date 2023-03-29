@@ -1,81 +1,170 @@
-devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli1
+Status 03/29/23
+git log
+commit 6b89b1feaf71e0c7717e86ff9bb92b847cdf1afa (HEAD -> dev, origin/dev)
+Author: Edward Vidal Jr <develone@sbcglobal.net>
+Date:   Tue Mar 28 18:37:53 2023 -0600
+
+    needed chg
+
+commit bbe187f2faa4800308461df921a1ad1ba910d4ec
+Author: Edward Vidal Jr <develone@sbcglobal.net>
+Date:   Tue Mar 28 15:15:24 2023 -0600
+
+    now using 384 vs 256
+
+devel@pi4-50:~ $ minicom myusb0
+
+Welcome to minicom 2.8
+
+OPTIONS: I18n 
+Port /dev/ttyUSB0, 18:44:14
+
+Press CTRL-A Z for help on special keys
+
+Starting FreeRTOS on core 0:
+Connecting to Wi-Fi...
+Connected.
+mqtt_ip = 0xd401a8c0 &mqtt_ip = 0x20000598
+mqtt_port = 1883 &mqtt_port 0x2000059c
+Starting server at 192.168.1.176 on port 4001
+
+Ready, running iperf server at 192.168.1.176
+Client connected
+Writing 384 bytes to client
+tcp_server_sent 384
+Waiting for buffer from client
+tcp_server_recv 128/0 err 0
+RPi sent  
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123453
+                                                                                
+tcp_server_recv 64/256 err 0                                                    
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123453
+01234567890123456789012345678901234567890123456789012345678901201234567890123453
+                                                                                
+tcp_server_recv 64/320 err 0                                                    
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123453
+01234567890123456789012345678901234567890123456789012345678901201234567890123453
+012345678901234567890123456789012345678901234567890123456789012                 
+                                                                                
+tcp_server_recv buffer ok                                                       
+test success                                                                    
+Starting server at 192.168.1.176 on port 4001
+Completed iperf transfer of 20 MBytes @ 17.0 Mbits/sec                          
+Total iperf megabytes since start 20 Mbytes 
+
+devel@pi4-50:~/pico_w-mqtt/remote1 $ ./exe-ocd.sh 
+Open On-Chip Debugger 0.11.0-g228ede4-dirty (2022-08-27-19:45)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+adapter speed: 1000 kHz
+
+Info : Hardware thread awareness created
+Info : Hardware thread awareness created
+Info : RP2040 Flash Bank Command
+Info : BCM2835 GPIO JTAG/SWD bitbang driver
+	.
+	.
+	.
+** Programming Finished **
+** Verify Started **
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000184 msp: 0x20041f00
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000184 msp: 0x20041f00
+** Verified OK **
+** Resetting Target **
+shutdown command invoked
+
+devel@pi4-50:~/pico_w-mqtt/remote1 $ ../pi_tcp_tests/cli1
 Socket created successfully
 Connected with server successfully
 Starting FreeRTOS on core 0: remote1
 Connecting to Wi-Fi...
 Connected. iperf server 192.168.1.176 4001 
-012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+456789012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
 
-devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli2
+devel@pi4-50:~/pico_w-mqtt/remote1 $ ../pi_tcp_tests/cli2
 Socket created successfully
 Connected with server successfully
 Starting FreeRTOS on core 0: remote2
 Connecting to Wi-Fi...
 Connected. iperf server 192.168.1.160 4001 
-012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+456789012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
 
-devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli3
+devel@pi4-50:~/pico_w-mqtt/remote1 $ ../pi_tcp_tests/cli3
 Socket created successfully
 Connected with server successfully
 Starting FreeRTOS on core 0: remote3
 Connecting to Wi-Fi...
 Connected. iperf server 192.168.1.178 4001 
-012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+456789012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
 
-devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli4
+devel@pi4-50:~/pico_w-mqtt/remote1 $ ../pi_tcp_tests/cli4
 Socket created successfully
 Connected with server successfully
 Starting FreeRTOS on core 0: remote4
 Connecting to Wi-Fi...
 Connected. iperf server 192.168.1.177 4001 
-012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+456789012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
 
-devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli5
+devel@pi4-50:~/pico_w-mqtt/remote1 $ ../pi_tcp_tests/cli5
 Socket created successfully
 Connected with server successfully
 Starting FreeRTOS on core 0: remote5
 Connecting to Wi-Fi...
 Connected. iperf server 192.168.1.159 4001 
-012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+456789012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901
 
-devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote1
+devel@pi4-50:~/pico_w-mqtt/remote1 $ iperf -c remote1
 ------------------------------------------------------------
 Client connecting to remote1, TCP port 5001
 TCP window size: 85.0 KByte (default)
 ------------------------------------------------------------
-[  3] local 192.168.1.212 port 53772 connected with 192.168.1.176 port 5001
+[  3] local 192.168.1.212 port 57322 connected with 192.168.1.176 port 5001
 [ ID] Interval       Transfer     Bandwidth
-[  3] 0.0000-10.0071 sec  20.0 MBytes  16.8 Mbits/sec
-devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote2
+[  3] 0.0000-10.0127 sec  20.3 MBytes  17.0 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote1 $ iperf -c remote2
 ------------------------------------------------------------
 Client connecting to remote2, TCP port 5001
 TCP window size: 85.0 KByte (default)
 ------------------------------------------------------------
-[  3] local 192.168.1.212 port 49616 connected with 192.168.1.160 port 5001
+[  3] local 192.168.1.212 port 57510 connected with 192.168.1.160 port 5001
 [ ID] Interval       Transfer     Bandwidth
-[  3] 0.0000-10.0217 sec  19.3 MBytes  16.1 Mbits/sec
-devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote3
+[  3] 0.0000-10.0558 sec  19.5 MBytes  16.3 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote1 $ iperf -c remote3
 ------------------------------------------------------------
 Client connecting to remote3, TCP port 5001
 TCP window size: 85.0 KByte (default)
 ------------------------------------------------------------
-[  3] local 192.168.1.212 port 35636 connected with 192.168.1.178 port 5001
+[  3] local 192.168.1.212 port 34174 connected with 192.168.1.178 port 5001
 [ ID] Interval       Transfer     Bandwidth
-[  3] 0.0000-10.0314 sec  19.9 MBytes  16.6 Mbits/sec
-devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote4
+[  3] 0.0000-10.1837 sec  19.6 MBytes  16.2 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote1 $ iperf -c remote4
 ------------------------------------------------------------
 Client connecting to remote4, TCP port 5001
 TCP window size: 85.0 KByte (default)
 ------------------------------------------------------------
-[  3] local 192.168.1.212 port 44592 connected with 192.168.1.177 port 5001
+[  3] local 192.168.1.212 port 56718 connected with 192.168.1.177 port 5001
 [ ID] Interval       Transfer     Bandwidth
-[  3] 0.0000-10.0444 sec  19.8 MBytes  16.5 Mbits/sec
-devel@pi4-50:~/pico_w-mqtt/remote4 $ iperf -c remote5
+[  3] 0.0000-10.0374 sec  19.6 MBytes  16.4 Mbits/sec
+devel@pi4-50:~/pico_w-mqtt/remote1 $ iperf -c remote5
 ------------------------------------------------------------
 Client connecting to remote5, TCP port 5001
 TCP window size: 85.0 KByte (default)
 ------------------------------------------------------------
-[  3] local 192.168.1.212 port 43092 connected with 192.168.1.159 port 5001
-client await server close failed: Resource temporarily unavailable
+[  3] local 192.168.1.212 port 46392 connected with 192.168.1.159 port 5001
 [ ID] Interval       Transfer     Bandwidth
-[  3] 0.0000-15.1222 sec  17.9 MBytes  9.95 Mbits/sec
+
+[  3] 0.0000-10.0521 sec  20.0 MBytes  16.7 Mbits/sec
