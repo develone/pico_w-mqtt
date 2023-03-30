@@ -1,0 +1,36 @@
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli1
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.01 remote1
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.176 4001 
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 0 
+saved_mqtt_client 0xtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+t_clie��K�
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli3
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.01 remote3
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.178 4001 
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqtt_co0�_�
+devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli4
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.01 remote4
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.177 4001 
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 0 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230���
