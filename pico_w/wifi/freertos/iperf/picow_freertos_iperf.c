@@ -394,7 +394,7 @@ int main( void )
     while (true);
 #else
 	printf("Starting %s on core 0:\n", rtos_name);
-	sprintf(tmp,"Starting %s on core 0: %s\n", rtos_name,CYW43_HOST_NAME);
+	sprintf(tmp,"Starting %s on core 0: ver %s %s\n", rtos_name,ver,CYW43_HOST_NAME);
 	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     vLaunch();
 #endif
