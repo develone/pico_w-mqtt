@@ -1,3 +1,90 @@
+commit 6d46d7e2c89dc8f2f3b69f5abf2d5ec405a87879 (HEAD -> dev, origin/dev)
+Author: Edward Vidal Jr <develone@sbcglobal.net>
+Date:   Thu Mar 30 10:17:57 2023 -0600
+
+    status as of ver 0.0.01
+    commit 4fc373a2afdd6212a571930a6b7f49ee4647b786 (HEAD -> dev, origin/dev)
+    Author: Edward Vidal Jr <develone@sbcglobal.net>
+    Date:   Thu Mar 30 07:02:54 2023 -0600
+    
+        updated output
+
+
+mosquitto -c /etc/mosquitto/mosquitto.conf
+mosquitto_sub -t 'update/memo' -u 'testuser' -P 'password123'
+this is a message from pico_w ctrl 0       remote3
+this is a message from pico_w ctrl 0       remote2
+this is a message from pico_w ctrl 0       remote5
+this is a message from pico_w ctrl 0       remote1
+this is a message from pico_w ctrl 0       remote4
+this is a message from pico_w ctrl 0       remote3
+this is a message from pico_w ctrl 0       remote2
+this is a message from pico_w ctrl 0       remote5
+this is a message from pico_w ctrl 0       remote1
+this is a message from pico_w ctrl 0       remote4
+this is a message from pico_w ctrl 0       remote3
+this is a message from pico_w ctrl 0       remote2
+this is a message from pico_w ctrl 0       remote5
+this is a message from pico_w ctrl 0       remote1
+this is a message from pico_w ctrl 0       remote4
+this is a message from pico_w ctrl 0       remote3
+
+
+devel@pi4-50:~/pico_w-mqtt/pi_tcp_tests $ ./cli1
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.01 remote1
+Connecting to Wi-Fi...
+Connected. iperf server 192.168.1.176 4001 
+starting watchdog timer task
+mqtt_ip = 0xd401a8c0 mqtt_port = 1883 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 0 
+saved_mqtt_client 0xnt 0x20021fcc check_mqtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqtt_connected 1 
+saved_mqtt_client 0x20021fcc check_mqp
+]�
+
+
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+tcp_server_recv 128/0 err 0
+RPi sent  
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123453
+
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123453
+01234567890123456789012345678901234567890123456789012345678901201234567890123453
+
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123453
+01234567890123456789012345678901234567890123456789012345678901201234567890123453
+01234567890123456789012345678901234567890123456789012345678901201234567890123453
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.1.176 on port 4001
+
+
+devel@pi4-50:~/pico_w-mqtt/pi_tcp_tests $ iperf -c remote1
+------------------------------------------------------------
+Client connecting to remote1, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.1.212 port 51976 connected with 192.168.1.176 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-10.0429 sec  19.9 MBytes  16.6 Mbits/sec
+
+Completed iperf transfer of 19 MBytes @ 16.5 Mbits/sec
+Total iperf megabytes since start 19 Mbytes
+
+
+
+
+
+
 devel@pi4-50:~/pico_w-mqtt/remote4 $ ../pi_tcp_tests/cli1
 Socket created successfully
 Connected with server successfully
