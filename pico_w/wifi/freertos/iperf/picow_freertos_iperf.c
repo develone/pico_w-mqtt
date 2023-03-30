@@ -3,7 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-
+#include "tcp_debug.h"
+#include "head_tail.h"
 #include "mqtt_extra.h"
 
  
@@ -23,11 +24,11 @@
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
-#define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
+#define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
 #define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
-#define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
+#define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 2UL )
-#define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
+#define BLINK_TASK_PRIORITY				( tskIDLE_PRIORITY + 3UL )
 
 #include "lwip/apps/mqtt.h"
 #include "mqtt_example.h"
@@ -180,7 +181,8 @@ void watchdog_task(__unused void *params) {
 
     while (true) {
 	 
-	if (wifi_connected == 0) watchdog_update();
+	//if (wifi_connected == 0) watchdog_update();
+	watchdog_update();
  
        vTaskDelay(200);
     }
@@ -207,15 +209,19 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
   payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
   printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
   check_mqtt_connected = mqtt_client_is_connected(saved_mqtt_client);
+  /*
   if (check_mqtt_connected == 0) {
 	mqtt_client_free(saved_mqtt_client);
 	mqtt_example_init();
-  } 	
+  }
+  */ 	
   /*
   mqtt_client_is_connected 1 if connected to server, 0 otherwise 
   */
   printf("saved_mqtt_client 0x%x check_mqtt_connected %d \n", saved_mqtt_client,check_mqtt_connected);
-
+  sprintf(tmp,"saved_mqtt_client 0x%x check_mqtt_connected %d \n", saved_mqtt_client,check_mqtt_connected);
+  head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+	
   mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 	
         vTaskDelay(25000);
@@ -278,7 +284,7 @@ void main_task(__unused void *params) {
         return;
     }
 	watchdog_enable(10000, 1);
-	while (wifi_connected) {
+	//while (wifi_connected) {
     	cyw43_arch_enable_sta_mode();
     	printf("Connecting to Wi-Fi...\n");
 		sprintf(tmp,"Connecting to Wi-Fi...\n");
@@ -296,17 +302,17 @@ void main_task(__unused void *params) {
 			printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
 			sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d \n",mqtt_ip,mqtt_port);
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-			//mqtt_example_init();
-			wifi_connected = 0;
+			mqtt_example_init();
+			//wifi_connected = 0;
     		 
     	}
-	}	 
-	//xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
+	//}	 
+	
 
 	xTaskCreate(watchdog_task, "WatchdogThread", configMINIMAL_STACK_SIZE, NULL, WATCHDOG_TASK_PRIORITY, NULL);
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
     xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
-
+	xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
