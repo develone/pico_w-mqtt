@@ -1,0 +1,5 @@
+#!/bin/bash
+date_now=$(date "+%F-%H-%M-%S") 
+echo $date_now
+mosquitto_pub -h pi4-50 -p 1883 -t 'pub_time' -u 'testuser' -P 'password123' -m '0x0abccc1a'
+mosquitto_pub -h pi4-50 -p 1883 -t 'pub_time' -u 'testuser' -P 'password123' -m $date_now
