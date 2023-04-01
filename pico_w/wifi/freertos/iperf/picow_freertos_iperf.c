@@ -15,6 +15,7 @@
 #include "lwip/pbuf.h"
 #include "lwip/udp.h"
 
+
 #include "lwip/netif.h"
 #include "lwip/ip4_addr.h"
 #include "lwip/apps/lwiperf.h"
@@ -59,7 +60,7 @@ u16_t payload_size;
 
 static ip_addr_t mqtt_ip LWIP_MQTT_EXAMPLE_IPADDR_INIT;
 static mqtt_client_t* mqtt_client;
-static mqtt_client_t* saved_mqtt_client = NULL;
+ 
 static const struct mqtt_connect_client_info_t mqtt_client_info =
 {
   CYW43_HOST_NAME,
@@ -83,7 +84,11 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" data cb: len %d, flags %d\n", client_info->client_id,
           (int)len, (int)flags));
-  if (len==19) printf("%s \n",data);
+  if (len==19) {
+      printf("%s \n",data);
+      sprintf(tmp, "%s \n",data);
+      head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+  }
 }
 
 static void
@@ -129,8 +134,8 @@ mqtt_example_init(void)
 #if LWIP_TCP
   mqtt_client = mqtt_client_new();
   printf("mqtt_client 0x%x &mqtt_client 0x%x \n", mqtt_client,&mqtt_client);	
-  saved_mqtt_client = mqtt_client;
-  printf("saved_mqtt_client 0x%x mqtt_client 0x%x \n", saved_mqtt_client,mqtt_client);
+   
+  printf("mqtt_client 0x%x mqtt_client 0x%x \n", mqtt_client,mqtt_client);
   mqtt_set_inpub_callback(mqtt_client,
           mqtt_incoming_publish_cb,
           mqtt_incoming_data_cb,
@@ -208,19 +213,19 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
   strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
   payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
   printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
-  check_mqtt_connected = mqtt_client_is_connected(saved_mqtt_client);
-  /*
+  sprintf(tmp,"mqtt_connect 0x%x ",check_mqtt_connected);
+  head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+  check_mqtt_connected = mqtt_client_is_connected(mqtt_client);
+  sprintf(tmp,"mqtt_connect 0x%x\n",check_mqtt_connected);
+  head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   if (check_mqtt_connected == 0) {
-	mqtt_client_free(saved_mqtt_client);
-	mqtt_example_init();
+    printf("in re-connect\n");
+ 
   }
-  */ 	
+  	
   /*
   mqtt_client_is_connected 1 if connected to server, 0 otherwise 
   */
-  printf("saved_mqtt_client 0x%x check_mqtt_connected %d \n", saved_mqtt_client,check_mqtt_connected);
-  sprintf(tmp,"saved_mqtt_client 0x%x check_mqtt_connected %d \n", saved_mqtt_client,check_mqtt_connected);
-  head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
 	
   mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 	
@@ -304,6 +309,7 @@ void main_task(__unused void *params) {
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
 			topofbuf = (char *)&client_message[256];
 			mqtt_example_init();
+            sleep_ms(1000);
 			//wifi_connected = 0;
     		 
     	}
@@ -400,3 +406,5 @@ int main( void )
 #endif
     return 0;
 }
+
+ 
