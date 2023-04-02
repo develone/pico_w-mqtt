@@ -15,7 +15,6 @@
 #include "lwip/pbuf.h"
 #include "lwip/udp.h"
 
-
 #include "lwip/netif.h"
 #include "lwip/ip4_addr.h"
 #include "lwip/apps/lwiperf.h"
@@ -33,6 +32,31 @@
 
 #include "lwip/apps/mqtt.h"
 #include "mqtt_example.h"
+#include "pico/util/datetime.h"
+char rectime[19];
+static volatile bool fired = false;
+static void alarm_callback(void) {
+    datetime_t t = {0};
+    rtc_get_datetime(&t);
+    char datetime_buf[256];
+    char *datetime_str = &datetime_buf[0];
+    datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
+    printf("Alarm Fired At %s\n", datetime_str);
+    stdio_flush();
+    fired = true;
+}
+/*needed for rtc */
+datetime_t t;
+datetime_t alarm;
+datetime_t t_ntp;
+datetime_t *pt;
+datetime_t *palarm;
+datetime_t *pt_ntp;
+u8_t rtc_set_flag = 0;
+char datetime_buf[256];
+char *datetime_str = &datetime_buf[0];
+
+
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
   
 u16_t mqtt_port = 1883;
@@ -76,6 +100,35 @@ static const struct mqtt_connect_client_info_t mqtt_client_info =
 #endif
 };
 
+void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
+	if(rtc_set_flag==0) {
+		pt->year = pt_ntp->year;
+		pt->month = pt_ntp->month; 
+		pt->day = pt_ntp->day;
+		pt->dotw = 0;
+		pt->hour = pt_ntp->hour;
+		pt->min = pt_ntp->min;
+		pt->sec = pt_ntp->sec;
+		palarm->year = pt_ntp->year;
+		palarm->month = pt_ntp->month;
+		palarm->day = pt_ntp->day;
+		palarm->dotw = 0;
+		palarm->hour = pt_ntp->hour;
+		palarm->min = pt_ntp->min + 1;
+		palarm->sec = pt_ntp->sec;
+		rtc_set_flag=1;
+    	// Start the RTC
+    	rtc_init();
+    	rtc_set_datetime(&t);
+		sleep_us(64);
+		rtc_set_alarm(&alarm, &alarm_callback);
+
+	}
+        rtc_get_datetime(&t);
+        datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
+        printf("\r%s      ", datetime_str);
+}
+ 
 static void
 mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
 {
@@ -84,9 +137,18 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" data cb: len %d, flags %d\n", client_info->client_id,
           (int)len, (int)flags));
+          //Sunday 2 April 1:34:48 2023      got ntp response: 02/04/2023 01:34:47    2023-04-01-19-48-24 -> 2023/04/01 19:48:24
+
   if (len==19) {
-      printf("%s \n",data);
-      sprintf(tmp, "%s \n",data);
+      strncpy(rectime,data,19);
+      rectime[4]='t/';
+      rectime[7]='/';
+      rectime[10]=' ';
+      rectime[13]=':';
+      rectime[16]=':';
+      printf("%s \n",rectime);
+      //set_rtc(pt,rectime,palarm);
+      sprintf(tmp, "%s \n",rectime);
       head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   }
 }
