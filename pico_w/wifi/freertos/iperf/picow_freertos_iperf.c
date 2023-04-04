@@ -54,6 +54,7 @@ datetime_t *palarm;
 datetime_t *pt_ntp;
 u8_t rtc_set_flag = 0;
 char datetime_buf[256];
+char tmp1[5],tmp2[3];
 char *datetime_str = &datetime_buf[0];
 
 
@@ -102,6 +103,13 @@ static const struct mqtt_connect_client_info_t mqtt_client_info =
 
 void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
 	if(rtc_set_flag==0) {
+        printf("0x%x 0x%x 0x%x\n",pt,pt_ntp,palarm);
+        printf("%02d\n",t_ntp.year);
+        printf("%02d\n",t_ntp.month);
+        printf("%02d\n",t_ntp.day);
+        printf("%02d\n",t_ntp.hour);
+        printf("%02d\n",t_ntp.min);
+        printf("%02d\n",t_ntp.sec);
 		pt->year = pt_ntp->year;
 		pt->month = pt_ntp->month; 
 		pt->day = pt_ntp->day;
@@ -140,14 +148,35 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
           //Sunday 2 April 1:34:48 2023      got ntp response: 02/04/2023 01:34:47    2023-04-01-19-48-24 -> 2023/04/01 19:48:24
 
   if (len==19) {
+      printf("t 0x%x &t 0x%x *pt 0x%x  \n",t,&t,*pt );
+      printf("t_ntp 0x%x &pt_ntp 0x%x *pt_ntp 0x%x  \n",t_ntp,&t_ntp,*pt_ntp );
       strncpy(rectime,data,19);
-      rectime[4]='t/';
-      rectime[7]='/';
-      rectime[10]=' ';
-      rectime[13]=':';
-      rectime[16]=':';
+      strncpy(tmp1,&data[0],4);
+      t_ntp.year = atoi(tmp1);
+      printf("%d\n",t_ntp.year);
+      strncpy(tmp2,&data[5],2);
+      t_ntp.month = atoi(tmp2);
+      printf("%02d\n",t_ntp.month);
+      strncpy(tmp2,&data[8],2);
+      t_ntp.day = atoi(tmp2);
+      printf("%02d\n",t_ntp.day);
+
+      strncpy(tmp2,&data[11],2);
+      t_ntp.hour = atoi(tmp2);
+      printf("%02d\n",t_ntp.hour);
+      strncpy(tmp2,&data[14],2);
+      t_ntp.min = atoi(tmp2);
+      printf("%02d\n",t_ntp.min);
+      strncpy(tmp2,&data[17],2);
+      t_ntp.sec = atoi(tmp2);
+      printf("%02d\n",t_ntp.sec);
       printf("%s \n",rectime);
-      //set_rtc(pt,rectime,palarm);
+      
+      pt = &t;
+      pt_ntp = &t_ntp;
+      palarm = &alarm;
+      printf("0x%x 0x%x 0x%x\n",pt,pt_ntp,palarm);
+      //set_rtc(pt,pt_ntp,palarm);
       sprintf(tmp, "%s \n",rectime);
       head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   }
@@ -282,7 +311,15 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
   head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   if (check_mqtt_connected == 0) {
     printf("in re-connect\n");
- 
+    mqtt_connected = 1;
+    sprintf(tmp,"in re-connect forceing watcdof rebiit %d\n",mqtt_connected);
+    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    mqtt_disconnect(mqtt_client);
+   // mqtt_client_free(mqtt_client);
+   watchdog_enable(100, 1);
+  
+    mqtt_example_init();
+    sleep_ms(1000);
   }
   	
   /*
