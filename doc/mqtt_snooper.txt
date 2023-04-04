@@ -1,0 +1,23 @@
+This output was collected on Samsung Galay A71 5 using the app MQTT Snooper
+The data was in file defaut.cvs up loaded to gmail. in a file default.xlsx.
+mosquitto was the broker on port 1883.
+mosquitto -c /etc/mosquitto/mosquitto.conf
+this is a message from pico_w ctrl 0       remote5
+this is a message from pico_w ctrl 0       remote1
+this is a message from pico_w ctrl 0       remote4
+this is a message from pico_w ctrl 0       remote3
+this is a message from pico_w ctrl 0       remote2
+this is a message from pico_w ctrl 0       remote5
+this is a message from pico_w ctrl 0       remote1
+
+mosquitto_sub -t 'update/memo' -u 'testuser' -P 'password123'
+mosquitto_sub -h Host of Broker -p 1883 -t 'update/memo' -u 'testuser' -P 'password123'
+update/memo;"51";"1680640899";"0";"0";"0";"this is a message from pico_w ctrl 0       remote1_x0000_"
+update/memo;"51";"1680640901";"0";"0";"0";"this is a message from pico_w ctrl 0       remote4_x0000_"
+update/memo;"51";"1680640906";"0";"0";"0";"this is a message from pico_w ctrl 0       remote2_x0000_"
+update/memo;"51";"1680640916";"0";"0";"0";"this is a message from pico_w ctrl 0       remote3_x0000_"
+update/memo;"51";"1680640923";"0";"0";"0";"this is a message from pico_w ctrl 0       remote5_x0000_"
+update/memo;"51";"1680640923";"0";"0";"0";"this is a message from pico_w ctrl 0       remote1_x0000_"
+update/memo;"51";"1680640926";"0";"0";"0";"this is a message from pico_w ctrl 0       remote4_x0000_"
+update/memo;"51";"1680640931";"0";"0";"0";"this is a message from pico_w ctrl 0       remote2_x0000_"
+update/memo;"51";"1680640941";"0";"0";"0";"this is a message from pico_w ctrl 0       remote3_x0000_"
