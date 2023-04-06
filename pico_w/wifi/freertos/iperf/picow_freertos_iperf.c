@@ -246,6 +246,8 @@ void rtc_task(__unused void *params) {
         if(rtc_set_flag==1) {
             rtc_get_datetime(&t);
             printf("%04d/%02d/%02d %02d:%02d:%02d\n",t.year,t.month,t.day,t.hour,t.min,t.sec);
+			sprintf(tmp,"%04d/%02d/%02d %02d:%02d:%02d\n",t.year,t.month,t.day,t.hour,t.min,t.sec);
+			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
         }
  
  
