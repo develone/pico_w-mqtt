@@ -24,6 +24,7 @@
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
+#define RTC_TASK_PRIORITY			    ( tskIDLE_PRIORITY + 7UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
 #define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
 #define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
@@ -101,41 +102,6 @@ static const struct mqtt_connect_client_info_t mqtt_client_info =
 #endif
 };
 
-void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
-	if(rtc_set_flag==0) {
-        printf("0x%x 0x%x 0x%x\n",pt,pt_ntp,palarm);
-        printf("%02d\n",t_ntp.year);
-        printf("%02d\n",t_ntp.month);
-        printf("%02d\n",t_ntp.day);
-        printf("%02d\n",t_ntp.hour);
-        printf("%02d\n",t_ntp.min);
-        printf("%02d\n",t_ntp.sec);
-		pt->year = pt_ntp->year;
-		pt->month = pt_ntp->month; 
-		pt->day = pt_ntp->day;
-		pt->dotw = 0;
-		pt->hour = pt_ntp->hour;
-		pt->min = pt_ntp->min;
-		pt->sec = pt_ntp->sec;
-		palarm->year = pt_ntp->year;
-		palarm->month = pt_ntp->month;
-		palarm->day = pt_ntp->day;
-		palarm->dotw = 0;
-		palarm->hour = pt_ntp->hour;
-		palarm->min = pt_ntp->min + 1;
-		palarm->sec = pt_ntp->sec;
-		rtc_set_flag=1;
-    	// Start the RTC
-    	rtc_init();
-    	rtc_set_datetime(&t);
-		sleep_us(64);
-		rtc_set_alarm(&alarm, &alarm_callback);
-
-	}
-        rtc_get_datetime(&t);
-        datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
-        printf("\r%s      ", datetime_str);
-}
  
 static void
 mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
@@ -148,37 +114,40 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
           //Sunday 2 April 1:34:48 2023      got ntp response: 02/04/2023 01:34:47    2023-04-01-19-48-24 -> 2023/04/01 19:48:24
 
   if (len==19) {
-      printf("t 0x%x &t 0x%x *pt 0x%x  \n",t,&t,*pt );
-      printf("t_ntp 0x%x &pt_ntp 0x%x *pt_ntp 0x%x  \n",t_ntp,&t_ntp,*pt_ntp );
       strncpy(rectime,data,19);
-      strncpy(tmp1,&data[0],4);
-      t_ntp.year = atoi(tmp1);
-      printf("%d\n",t_ntp.year);
-      strncpy(tmp2,&data[5],2);
-      t_ntp.month = atoi(tmp2);
-      printf("%02d\n",t_ntp.month);
-      strncpy(tmp2,&data[8],2);
-      t_ntp.day = atoi(tmp2);
-      printf("%02d\n",t_ntp.day);
-
-      strncpy(tmp2,&data[11],2);
-      t_ntp.hour = atoi(tmp2);
-      printf("%02d\n",t_ntp.hour);
-      strncpy(tmp2,&data[14],2);
-      t_ntp.min = atoi(tmp2);
-      printf("%02d\n",t_ntp.min);
-      strncpy(tmp2,&data[17],2);
-      t_ntp.sec = atoi(tmp2);
-      printf("%02d\n",t_ntp.sec);
-      printf("%s \n",rectime);
-      
-      pt = &t;
-      pt_ntp = &t_ntp;
-      palarm = &alarm;
-      printf("0x%x 0x%x 0x%x\n",pt,pt_ntp,palarm);
-      //set_rtc(pt,pt_ntp,palarm);
       sprintf(tmp, "%s \n",rectime);
       head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+      if(rtc_set_flag==0) {
+          printf("t 0x%x &t 0x%x *pt 0x%x  \n",t,&t,*pt );
+          printf("t_ntp 0x%x &pt_ntp 0x%x *pt_ntp 0x%x  \n",t_ntp,&t_ntp,*pt_ntp );
+          
+          strncpy(tmp1,&data[0],4);
+          t.year = atoi(tmp1);
+          printf("%d\n",t.year);
+          strncpy(tmp2,&data[5],2);
+          t.month = atoi(tmp2);
+          printf("%02d\n",t.month);
+          strncpy(tmp2,&data[8],2);
+          t.day = atoi(tmp2);
+          printf("%02d\n",t.day);
+          strncpy(tmp2,&data[11],2);
+          t.hour = atoi(tmp2);
+          printf("%02d\n",t.hour);
+          strncpy(tmp2,&data[14],2);
+          t.min = atoi(tmp2);
+          printf("%02d\n",t.min);
+          strncpy(tmp2,&data[17],2);
+          t.sec = atoi(tmp2);
+          printf("%02d\n",t.sec);
+          rtc_set_flag=1;
+          rtc_init();
+          rtc_set_datetime(&t);
+          sleep_us(64);
+          
+      }
+      printf("%s \n",rectime);
+
+
   }
 }
 
@@ -269,6 +238,21 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 
     printf("Completed iperf transfer of %d MBytes @ %.1f Mbits/sec\n", mbytes, mbits);
     printf("Total iperf megabytes since start %d Mbytes\n", total_iperf_megabytes);
+}
+
+void rtc_task(__unused void *params) {
+   
+    while (true) {
+        if(rtc_set_flag==1) {
+            rtc_get_datetime(&t);
+            printf("%04d/%02d/%02d %02d:%02d:%02d\n",t.year,t.month,t.day,t.hour,t.min,t.sec);
+        }
+ 
+ 
+        
+            
+        vTaskDelay(25000);
+    }
 }
 
 
@@ -419,6 +403,7 @@ void main_task(__unused void *params) {
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
     xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
 	xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
+    xTaskCreate(rtc_task, "RTCThread", configMINIMAL_STACK_SIZE, NULL, RTC_TASK_PRIORITY, NULL);
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
