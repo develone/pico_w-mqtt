@@ -92,7 +92,7 @@ static const struct mqtt_connect_client_info_t mqtt_client_info =
   CYW43_HOST_NAME,
   "testuser", /* user */
   "password123", /* pass */
-  200,  /* keep alive */
+  0,  /* keep alive */
   "topic_qos0", /* will_topic */
   NULL, /* will_msg */
   0,    /* will_qos */
