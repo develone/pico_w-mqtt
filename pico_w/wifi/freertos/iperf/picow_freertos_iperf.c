@@ -18,12 +18,14 @@
 #include "lwip/netif.h"
 #include "lwip/ip4_addr.h"
 #include "lwip/apps/lwiperf.h"
-
+#include "hardware/gpio.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
+
+#define GPIO_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
 #define RTC_TASK_PRIORITY			    ( tskIDLE_PRIORITY + 7UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
 #define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
@@ -57,7 +59,26 @@ u8_t rtc_set_flag = 0;
 char datetime_buf[256];
 char tmp1[5],tmp2[3];
 char *datetime_str = &datetime_buf[0];
+/*needed for GPIO from pico-examples/gpio/hello_7segment/hello_7segment.c
+gpio will be an additional freertos task
+*/
+#define FIRST_GPIO 2
+#define BUTTON_GPIO (FIRST_GPIO+7)
 
+// This array converts a number 0-9 to a bit pattern to send to the GPIOs
+
+int bits[10] = {
+        0x3f,  // 0
+        0x06,  // 1
+        0x5b,  // 2
+        0x4f,  // 3
+        0x66,  // 4
+        0x6d,  // 5
+        0x7d,  // 6
+        0x07,  // 7
+        0x7f,  // 8
+        0x67   // 9
+};
 
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
   
@@ -238,6 +259,9 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 
     printf("Completed iperf transfer of %d MBytes @ %.1f Mbits/sec\n", mbytes, mbits);
     printf("Total iperf megabytes since start %d Mbytes\n", total_iperf_megabytes);
+#if CYW43_USE_STATS
+    printf("packets in %u packets out %u\n", CYW43_STAT_GET(PACKET_IN_COUNT), CYW43_STAT_GET(PACKET_OUT_COUNT));
+#endif
 }
 
 void rtc_task(__unused void *params) {
@@ -267,6 +291,55 @@ void watchdog_task(__unused void *params) {
 	watchdog_update();
  
        vTaskDelay(200);
+    }
+}
+
+void gpio_task(__unused void *params) {
+    //bool on = false;
+    printf("gpio_task starts\n");
+     
+ 
+        
+//We could use gpio_set_dir_out_masked() here
+
+    for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 7; gpio++) {
+        gpio_init(gpio);
+        gpio_set_dir(gpio, GPIO_OUT);
+        // Our bitmap above has a bit set where we need an LED on, BUT, we are pulling low to light
+        // so invert our output
+        gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
+    }
+
+    gpio_init(BUTTON_GPIO);
+    gpio_set_dir(BUTTON_GPIO, GPIO_IN);
+    // We are using the button to pull down to 0v when pressed, so ensure that when
+    // unpressed, it uses internal pull ups. Otherwise when unpressed, the input will
+    // be floating.
+    gpio_pull_up(BUTTON_GPIO);
+
+    //int val = 0;
+    while (true) {
+        int val = 0;
+        if (!gpio_get(BUTTON_GPIO)) {
+            if (val == 9) {
+                val = 0;
+            } else {
+                val++;
+            }
+        } else if (val == 0) {
+            val = 9;
+        } else {
+            val--;
+        }
+
+        // We are starting with GPIO 2, our bitmap starts at bit 0 so shift to start at 2.
+        int32_t mask = bits[val] << FIRST_GPIO;
+        gpio_set_mask(mask);
+        sleep_ms(250);
+        gpio_clr_mask(mask);
+    
+        
+        vTaskDelay(200);
     }
 }
 
@@ -406,6 +479,7 @@ void main_task(__unused void *params) {
     xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
 	xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
     xTaskCreate(rtc_task, "RTCThread", configMINIMAL_STACK_SIZE, NULL, RTC_TASK_PRIORITY, NULL);
+    xTaskCreate(gpio_task, "GPIOThread", configMINIMAL_STACK_SIZE, NULL, GPIO_TASK_PRIORITY, NULL);
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
