@@ -44,7 +44,7 @@ static void alarm_callback(void) {
     char datetime_buf[256];
     char *datetime_str = &datetime_buf[0];
     datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
-    printf("Alarm Fired At %s\n", datetime_str);
+    //printf("Alarm Fired At %s\n", datetime_str);
     stdio_flush();
     fired = true;
 }
@@ -139,34 +139,34 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
       sprintf(tmp, "%s \n",rectime);
       head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
       if(rtc_set_flag==0) {
-          printf("t 0x%x &t 0x%x *pt 0x%x  \n",t,&t,*pt );
-          printf("t_ntp 0x%x &pt_ntp 0x%x *pt_ntp 0x%x  \n",t_ntp,&t_ntp,*pt_ntp );
+          //printf("t 0x%x &t 0x%x *pt 0x%x  \n",t,&t,*pt );
+          //printf("t_ntp 0x%x &pt_ntp 0x%x *pt_ntp 0x%x  \n",t_ntp,&t_ntp,*pt_ntp );
           
           strncpy(tmp1,&data[0],4);
           t.year = atoi(tmp1);
-          printf("%d\n",t.year);
+          //printf("%d\n",t.year);
           strncpy(tmp2,&data[5],2);
           t.month = atoi(tmp2);
-          printf("%02d\n",t.month);
+          //printf("%02d\n",t.month);
           strncpy(tmp2,&data[8],2);
           t.day = atoi(tmp2);
-          printf("%02d\n",t.day);
+          //printf("%02d\n",t.day);
           strncpy(tmp2,&data[11],2);
           t.hour = atoi(tmp2);
-          printf("%02d\n",t.hour);
+          //printf("%02d\n",t.hour);
           strncpy(tmp2,&data[14],2);
           t.min = atoi(tmp2);
-          printf("%02d\n",t.min);
+          //printf("%02d\n",t.min);
           strncpy(tmp2,&data[17],2);
           t.sec = atoi(tmp2);
-          printf("%02d\n",t.sec);
+          //printf("%02d\n",t.sec);
           rtc_set_flag=1;
           rtc_init();
           rtc_set_datetime(&t);
           sleep_us(64);
           
       }
-      printf("%s \n",rectime);
+      //printf("%s \n",rectime);
 
 
   }
@@ -214,21 +214,21 @@ mqtt_example_init(void)
 {
 #if LWIP_TCP
   mqtt_client = mqtt_client_new();
-  printf("mqtt_client 0x%x &mqtt_client 0x%x \n", mqtt_client,&mqtt_client);	
+  //printf("mqtt_client 0x%x &mqtt_client 0x%x \n", mqtt_client,&mqtt_client);	
    
-  printf("mqtt_client 0x%x mqtt_client 0x%x \n", mqtt_client,mqtt_client);
+  //printf("mqtt_client 0x%x mqtt_client 0x%x \n", mqtt_client,mqtt_client);
   mqtt_set_inpub_callback(mqtt_client,
           mqtt_incoming_publish_cb,
           mqtt_incoming_data_cb,
           LWIP_CONST_CAST(void*, &mqtt_client_info));
-  printf("mqtt_set_inpub_callback 0x%x\n",mqtt_set_inpub_callback);
+  //printf("mqtt_set_inpub_callback 0x%x\n",mqtt_set_inpub_callback);
   
 
   mqtt_connected = mqtt_client_connect(mqtt_client,
           &mqtt_ip, mqtt_port,
           mqtt_connection_cb, LWIP_CONST_CAST(void*, &mqtt_client_info),
           &mqtt_client_info);
-  printf("mqtt_client_connect 0x%x\n",mqtt_client_connect);
+  //printf("mqtt_client_connect 0x%x\n",mqtt_client_connect);
 
  
   //printf("0x%x \n",LWIP_CONST_CAST(void*, &mqtt_client_info));
@@ -257,10 +257,10 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 
     total_iperf_megabytes += mbytes;
 
-    printf("Completed iperf transfer of %d MBytes @ %.1f Mbits/sec\n", mbytes, mbits);
-    printf("Total iperf megabytes since start %d Mbytes\n", total_iperf_megabytes);
+    //printf("Completed iperf transfer of %d MBytes @ %.1f Mbits/sec\n", mbytes, mbits);
+    //printf("Total iperf megabytes since start %d Mbytes\n", total_iperf_megabytes);
 #if CYW43_USE_STATS
-    printf("packets in %u packets out %u\n", CYW43_STAT_GET(PACKET_IN_COUNT), CYW43_STAT_GET(PACKET_OUT_COUNT));
+    //printf("packets in %u packets out %u\n", CYW43_STAT_GET(PACKET_IN_COUNT), CYW43_STAT_GET(PACKET_OUT_COUNT));
 #endif
 }
 
@@ -269,7 +269,7 @@ void rtc_task(__unused void *params) {
     while (true) {
         if(rtc_set_flag==1) {
             rtc_get_datetime(&t);
-            printf("%04d/%02d/%02d %02d:%02d:%02d\n",t.year,t.month,t.day,t.hour,t.min,t.sec);
+            //printf("%04d/%02d/%02d %02d:%02d:%02d\n",t.year,t.month,t.day,t.hour,t.min,t.sec);
 			sprintf(tmp,"%04d/%02d/%02d %02d:%02d:%02d\n",t.year,t.month,t.day,t.hour,t.min,t.sec);
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
         }
@@ -296,7 +296,7 @@ void watchdog_task(__unused void *params) {
 
 void gpio_task(__unused void *params) {
     //bool on = false;
-    printf("gpio_task starts\n");
+    //printf("gpio_task starts\n");
      
  
         
@@ -345,7 +345,7 @@ void gpio_task(__unused void *params) {
 
 void mqtt_task(__unused void *params) {
     //bool on = false;
-    printf("mqtt_task starts\n");
+    //printf("mqtt_task starts\n");
 mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 
     while (true) {
@@ -353,23 +353,23 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
         static int last_core_id;
         if (portGET_CORE_ID() != last_core_id) {
             last_core_id = portGET_CORE_ID();
-            printf("mqtt now from core %d\n", last_core_id);
+            //printf("mqtt now from core %d\n", last_core_id);
         }
 #endif
         //cyw43_arch_gpio_put(0, on);
         //on = !on;
-        printf("in mqtt\n");
+        //printf("in mqtt\n");
   strcpy(PUB_PAYLOAD_SCR,PUB_PAYLOAD);
   strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
   payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
-  printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
+  //printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
   sprintf(tmp,"mqtt_connect 0x%x ",check_mqtt_connected);
   head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   check_mqtt_connected = mqtt_client_is_connected(mqtt_client);
   sprintf(tmp,"mqtt_connect 0x%x\n",check_mqtt_connected);
   head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   if (check_mqtt_connected == 0) {
-    printf("in re-connect\n");
+    //printf("in re-connect\n");
     mqtt_connected = 1;
     sprintf(tmp,"in re-connect forceing watcdof rebiit %d\n",mqtt_connected);
     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
@@ -387,7 +387,7 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 	
   mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 	
-        vTaskDelay(25000);
+        vTaskDelay(60000);
     }
 }
 
@@ -431,7 +431,7 @@ void blink_task(__unused void *params) {
         static int last_core_id;
         if (portGET_CORE_ID() != last_core_id) {
             last_core_id = portGET_CORE_ID();
-            printf("blinking now from core %d\n", last_core_id);
+            //printf("blinking now from core %d\n", last_core_id);
         }
 #endif
         cyw43_arch_gpio_put(0, on);
@@ -443,17 +443,17 @@ void blink_task(__unused void *params) {
 
 void main_task(__unused void *params) {
     if (cyw43_arch_init()) {
-        printf("failed to initialise\n");
+        //printf("failed to initialise\n");
         return;
     }
 	watchdog_enable(10000, 1);
 	//while (wifi_connected) {
     	cyw43_arch_enable_sta_mode();
-    	printf("Connecting to Wi-Fi...\n");
+    	//printf("Connecting to Wi-Fi...\n");
 		sprintf(tmp,"Connecting to Wi-Fi...\n");
 		head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
-        	printf("failed to connect.\n");
+        	//printf("failed to connect.\n");
         	exit(1);
     	} else {
         	printf("Connected.\n");
@@ -461,8 +461,8 @@ void main_task(__unused void *params) {
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
 			sprintf(tmp,"starting watchdog timer task\n");
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-			printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
-			printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
+			//printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
+			//printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
 			sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d \n",mqtt_ip,mqtt_port);
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
 			topofbuf = (char *)&client_message[256];
@@ -483,12 +483,12 @@ void main_task(__unused void *params) {
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
-    printf("\nReady, running iperf client\n");
+    //printf("\nReady, running iperf client\n");
     ip_addr_t clientaddr;
     ip4_addr_set_u32(&clientaddr, ipaddr_addr(xstr(IPERF_SERVER_IP)));
     assert(lwiperf_start_tcp_client_default(&clientaddr, &iperf_report, NULL) != NULL);
 #else
-    printf("\nReady, running iperf server at %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
+    //printf("\nReady, running iperf server at %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
     lwiperf_start_tcp_server_default(&iperf_report, NULL);
 #endif
     cyw43_arch_lwip_end();
