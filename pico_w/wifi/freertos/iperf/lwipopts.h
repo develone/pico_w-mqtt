@@ -14,6 +14,16 @@
 //
 // This example uses a common include to avoid repetition
 #include "lwipopts_examples_common.h"
+#define 	LWIP_DBG_LEVEL_ALL   0x00
+#define 	LWIP_DBG_LEVEL_WARNING   0x01
+#define 	LWIP_DBG_LEVEL_SERIOUS   0x02
+#define 	LWIP_DBG_LEVEL_SEVERE   0x03
+#define 	LWIP_DBG_ON   0x80U
+#define 	LWIP_DBG_TRACE   0x40U
+#define 	LWIP_DBG_STATE   0x20U
+#define 	LWIP_DBG_FRESH   0x10U
+#define 	LWIP_DBG_HALT   0x08U
+ 
 #define TCP_WND                     (8 * TCP_MSS)
 #define TCP_MSS                     1460
 #define TCP_SND_BUF                 (8 * TCP_MSS)
