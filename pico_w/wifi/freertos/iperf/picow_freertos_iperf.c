@@ -144,35 +144,41 @@ static const struct mqtt_connect_client_info_t mqtt_client_info =
 static void
 mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
 {
+  cyw43_arch_lwip_begin();
   const struct mqtt_connect_client_info_t* client_info = (const struct mqtt_connect_client_info_t*)arg;
   LWIP_UNUSED_ARG(data);
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" data cb: len %d, flags %d\n", client_info->client_id,
           (int)len, (int)flags));
           //Sunday 2 April 1:34:48 2023      got ntp response: 02/04/2023 01:34:47    2023-04-01-19-48-24 -> 2023/04/01 19:48:24
-
-   
+  cyw43_arch_lwip_end();
+     
 }
 
 static void
 mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len)
 {
+  cyw43_arch_lwip_begin();  
   const struct mqtt_connect_client_info_t* client_info = (const struct mqtt_connect_client_info_t*)arg;
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" publish cb: topic %s, len %d\n", client_info->client_id,
           topic, (int)tot_len));
+  cyw43_arch_lwip_end();
 }
 
 static void
 mqtt_request_cb(void *arg, err_t err)
 {
+  cyw43_arch_lwip_begin();  
   const struct mqtt_connect_client_info_t* client_info = (const struct mqtt_connect_client_info_t*)arg;
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" request cb: err %d\n", client_info->client_id, (int)err));
+  cyw43_arch_lwip_end();
 }
 static void
 mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status)
 {
+  cyw43_arch_lwip_begin();
   const struct mqtt_connect_client_info_t* client_info = (const struct mqtt_connect_client_info_t*)arg;
   LWIP_UNUSED_ARG(client);
 
@@ -187,6 +193,7 @@ mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t st
             "topic_qos0", 0,
             mqtt_request_cb, LWIP_CONST_CAST(void*, client_info),
             1);
+  cyw43_arch_lwip_end();
   }
 }
 #endif /*LWIP_TCP*/
@@ -195,6 +202,7 @@ void
 mqtt_example_init(void)
 {
 #if LWIP_TCP
+  cyw43_arch_lwip_begin();
   mqtt_client = mqtt_client_new();
   //printf("mqtt_client 0x%x &mqtt_client 0x%x \n", mqtt_client,&mqtt_client);	
    
@@ -210,6 +218,7 @@ mqtt_example_init(void)
           &mqtt_ip, mqtt_port,
           mqtt_connection_cb, LWIP_CONST_CAST(void*, &mqtt_client_info),
           &mqtt_client_info);
+  cyw43_arch_lwip_end();
   //printf("mqtt_client_connect 0x%x\n",mqtt_client_connect);
 
  
@@ -331,8 +340,9 @@ void gpio_task(__unused void *params) {
 void mqtt_task(__unused void *params) {
     //bool on = false;
     //printf("mqtt_task starts\n");
+    cyw43_arch_lwip_begin();
 mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
-
+cyw43_arch_lwip_end();
     while (true) {
 #if 0 && configNUM_CORES > 1
         static int last_core_id;
@@ -350,7 +360,9 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
   //printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
   //sprintf(tmp,"mqtt_connect 0x%x ",check_mqtt_connected);
   //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+  cyw43_arch_lwip_begin();
   check_mqtt_connected = mqtt_client_is_connected(mqtt_client);
+  cyw43_arch_lwip_end();
   //sprintf(tmp,"mq_con 0x%x ",check_mqtt_connected);
   //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
   if (check_mqtt_connected == 0) {
@@ -358,7 +370,9 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
     mqtt_connected = 1;
     sprintf(tmp,"in re-connect forceing watcdof rebiit %d\n",mqtt_connected);
     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    cyw43_arch_lwip_begin();
     mqtt_disconnect(mqtt_client);
+    cyw43_arch_lwip_end();
    // mqtt_client_free(mqtt_client);
    watchdog_enable(100, 1);
   
@@ -369,9 +383,9 @@ mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
   /*
   mqtt_client_is_connected 1 if connected to server, 0 otherwise 
   */
-	
+  cyw43_arch_lwip_begin();	
   mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
-	
+  cyw43_arch_lwip_end();	
         vTaskDelay(1000);
     }
 }
