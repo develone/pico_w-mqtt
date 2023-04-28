@@ -1,0 +1,128 @@
+mqtt.c prototypes defines 39 functions
+
+static const char *
+mqtt_msg_type_to_str(u8_t msg_type);
+
+static u16_t
+msg_generate_packet_id(mqtt_client_t *client);
+
+static void
+mqtt_ringbuf_put(struct mqtt_ringbuf_t *rb, u8_t item);
+
+static u8_t *
+mqtt_ringbuf_get_ptr(struct mqtt_ringbuf_t *rb);
+
+static void
+mqtt_ringbuf_advance_get_idx(struct mqtt_ringbuf_t *rb, u16_t len);
+
+static u16_t
+mqtt_ringbuf_len(struct mqtt_ringbuf_t *rb);
+
+static void
+mqtt_output_send(struct mqtt_ringbuf_t *rb, struct altcp_pcb *tpcb);
+
+static struct mqtt_request_t *
+mqtt_create_request(struct mqtt_request_t *r_objs, size_t r_objs_len, u16_t pkt_id, mqtt_request_cb_t cb, void *arg);
+
+static void
+mqtt_append_request(struct mqtt_request_t **tail, struct mqtt_request_t *r);
+
+static void
+mqtt_delete_request(struct mqtt_request_t *r);
+
+static struct mqtt_request_t *
+mqtt_take_request(struct mqtt_request_t **tail, u16_t pkt_id);
+
+static void
+mqtt_request_time_elapsed(struct mqtt_request_t **tail, u8_t t);
+
+static void
+mqtt_clear_requests(struct mqtt_request_t **tail);
+
+static void
+mqtt_init_requests(struct mqtt_request_t *r_objs, size_t r_objs_len);
+
+static void
+mqtt_output_append_u8(struct mqtt_ringbuf_t *rb, u8_t value);
+
+static
+void mqtt_output_append_u16(struct mqtt_ringbuf_t *rb, u16_t value);
+
+static void
+mqtt_output_append_buf(struct mqtt_ringbuf_t *rb, const void *data, u16_t length);
+
+static void
+mqtt_output_append_string(struct mqtt_ringbuf_t *rb, const char *str, u16_t length);
+
+static void
+mqtt_output_append_fixed_header(struct mqtt_ringbuf_t *rb, u8_t msg_type, u8_t fdup,
+                                u8_t fqos, u8_t fretain, u16_t r_length);
+
+static u8_t
+mqtt_output_check_space(struct mqtt_ringbuf_t *rb, u16_t r_length);
+
+static void
+mqtt_close(mqtt_client_t *client, mqtt_connection_status_t reason);
+
+static void
+mqtt_cyclic_timer(void *arg);
+
+static err_t
+pub_ack_rec_rel_response(mqtt_client_t *client, u8_t msg, u16_t pkt_id, u8_t qos);
+
+static void
+mqtt_incoming_suback(struct mqtt_request_t *r, u8_t result);
+
+static mqtt_connection_status_t
+mqtt_message_received(mqtt_client_t *client, u8_t fixed_hdr_len, u16_t length, u32_t remaining_length,
+                      u8_t *var_hdr_payload);
+
+static mqtt_connection_status_t
+mqtt_parse_incoming(mqtt_client_t *client, struct pbuf *p);
+
+static err_t
+mqtt_tcp_recv_cb(void *arg, struct altcp_pcb *pcb, struct pbuf *p, err_t err);
+
+static err_t
+mqtt_tcp_sent_cb(void *arg, struct altcp_pcb *tpcb, u16_t len);
+
+static void
+mqtt_tcp_err_cb(void *arg, err_t err);
+
+static err_t
+mqtt_tcp_poll_cb(void *arg, struct altcp_pcb *tpcb);
+
+static err_t
+mqtt_tcp_connect_cb(void *arg, struct altcp_pcb *tpcb, err_t err);
+
+err_t
+mqtt_publish(mqtt_client_t *client, const char *topic, const void *payload, u16_t payload_length, u8_t qos, u8_t retain,
+             mqtt_request_cb_t cb, void *arg);
+
+err_t
+mqtt_sub_unsub(mqtt_client_t *client, const char *topic, u8_t qos, mqtt_request_cb_t cb, void *arg, u8_t sub);
+
+void
+mqtt_set_inpub_callback(mqtt_client_t *client, mqtt_incoming_publish_cb_t pub_cb,
+                        mqtt_incoming_data_cb_t data_cb, void *arg);
+
+mqtt_client_t *
+mqtt_client_new(void);
+
+void
+mqtt_client_free(mqtt_client_t *client);
+
+err_t
+mqtt_client_connect(mqtt_client_t *client, const ip_addr_t *ip_addr, u16_t port, mqtt_connection_cb_t cb, void *arg,
+                    const struct mqtt_connect_client_info_t *client_info);
+
+void
+mqtt_disconnect(mqtt_client_t *client);
+
+u8_t
+mqtt_client_is_connected(mqtt_client_t *client);
+
+
+
+
+
