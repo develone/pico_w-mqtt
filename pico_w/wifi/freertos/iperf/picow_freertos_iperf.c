@@ -24,7 +24,7 @@
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
-
+char remotes[7][8]={"remote1","remote2","remote3","remote4","remote5","remote6","remotea"};
 #define GPIO_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
 //#define RTC_TASK_PRIORITY			    ( tskIDLE_PRIORITY + 7UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
@@ -96,7 +96,9 @@ int bits[10] = {
         0x7f,  // 8
         0x67   // 9
 };
-
+ 
+u8_t remote_index;
+u8_t cmd;
 #define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
   
@@ -151,10 +153,46 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" data cb: len %d, flags %d\n", client_info->client_id,
           (int)len, (int)flags));
           //Sunday 2 April 1:34:48 2023      got ntp response: 02/04/2023 01:34:47    2023-04-01-19-48-24 -> 2023/04/01 19:48:24
+          if (len==10) {
+               
+              if (data[0]=='1') remote_index=1;
+              if (data[0]=='2') remote_index=2;
+              if (data[0]=='3') remote_index=3;
+              if (data[0]=='4') remote_index=4;
+              if (data[0]=='5') remote_index=5;
+              if (data[0]=='6') remote_index=6;
+              if (data[0]== 'x') remote_index=255;
+              //if (remote_index==255) printf("all remotes will act on cmd\n");
+              //printf("remote%d\n",remote_index);
+              if (data[1]=='1') cmd=1;
+              if (data[1]=='2') cmd=2;
+              if (data[1]=='3') cmd=3;
+              if (data[1]=='4') cmd=4;
+              if (data[1]=='5') cmd=5;
+              if (data[1]=='6') cmd=6;
+              if (data[1]=='7') cmd=7;
+              if (data[1]=='8') cmd=8;
+              if (data[1]=='9') cmd=9;
+                
+              //printf("cmd %d\n",cmd);
+              process_cmd(remote_index, cmd);
+ 
+          }    
   cyw43_arch_lwip_end();
      
 }
-
+void process_cmd(u8_t rem, u8_t cc) {
+     
+    if((strcmp(remotes[0],CYW43_HOST_NAME)==0) && (rem-1==0)) printf("need to act on cmd\n");
+    if((strcmp(remotes[1],CYW43_HOST_NAME)==0) && (rem-2==0)) printf("need to act on cmd\n");
+    if((strcmp(remotes[2],CYW43_HOST_NAME)==0) && (rem-3==0)) printf("need to act on cmd\n");
+    if((strcmp(remotes[3],CYW43_HOST_NAME)==0) && (rem-4==0)) printf("need to act on cmd\n");
+    if((strcmp(remotes[4],CYW43_HOST_NAME)==0) && (rem-5==0)) printf("need to act on cmd\n");
+    if((strcmp(remotes[5],CYW43_HOST_NAME)==0) && (rem-6==0)) printf("need to act on cmd\n");
+    if((strcmp(remotes[6],CYW43_HOST_NAME)==0) && (rem-7==0)) printf("need to act on cmd\n"); 
+    if (rem==255) printf("need to act on cmd\n");
+    printf("rem %d cc %d %s\n",rem,cc,CYW43_HOST_NAME);
+}
 static void
 mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len)
 {
@@ -341,7 +379,7 @@ void mqtt_task(__unused void *params) {
     //bool on = false;
     //printf("mqtt_task starts\n");
     cyw43_arch_lwip_begin();
-mqtt_subscribe(mqtt_client,"pub_time", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
+mqtt_subscribe(mqtt_client,"pico/cmds", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 cyw43_arch_lwip_end();
     while (true) {
 #if 0 && configNUM_CORES > 1
