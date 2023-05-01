@@ -132,8 +132,12 @@ u16_t mqtt_port = 1883;
 char PUB_PAYLOAD[] = "this is a message from pico_w ctrl 0       ";
 char PUB_PAYLOAD_SCR[] = "this is a message from pico_w ctrl 0       ";
 char PUB_EXTRA_ARG[] = "test";
-u16_t payload_size;
 
+char PUB_PAYLOAD1[] = "this is a pico status       ";
+char PUB_PAYLOAD_SCR1[] = "this is a pico status       ";
+char PUB_EXTRA_ARG1[] = "test1";
+u16_t payload_size;
+u16_t payload1_size;
 static ip_addr_t mqtt_ip LWIP_MQTT_EXAMPLE_IPADDR_INIT;
 static mqtt_client_t* mqtt_client;
  
@@ -446,6 +450,10 @@ cyw43_arch_lwip_end();
   strcpy(PUB_PAYLOAD_SCR,PUB_PAYLOAD);
   strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
   payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
+  
+  strcpy(PUB_PAYLOAD_SCR1,PUB_PAYLOAD1);
+  strcat( PUB_PAYLOAD_SCR1,CYW43_HOST_NAME);
+  payload1_size = sizeof(PUB_PAYLOAD_SCR1) + 7;
   //printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
   //sprintf(tmp,"mqtt_connect 0x%x ",check_mqtt_connected);
   //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
@@ -474,6 +482,7 @@ cyw43_arch_lwip_end();
   */
   cyw43_arch_lwip_begin();	
   mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
+  mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR1,payload1_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG1);
   cyw43_arch_lwip_end();	
         vTaskDelay(1000);
     }
