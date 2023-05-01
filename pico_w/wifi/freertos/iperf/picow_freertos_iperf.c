@@ -10,6 +10,7 @@
  
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
+
 #include <string.h>
 #include "lwip/dns.h"
 #include "lwip/pbuf.h"
@@ -24,7 +25,9 @@
 #ifndef RUN_FREERTOS_ON_CORE
 	#define RUN_FREERTOS_ON_CORE 0
 #endif
-char remotes[7][8]={"remote1","remote2","remote3","remote4","remote5","remote6","remotea"};
+char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"};
+ 
+int rr[6];
 #define GPIO_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
 //#define RTC_TASK_PRIORITY			    ( tskIDLE_PRIORITY + 7UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
@@ -96,9 +99,15 @@ int bits[10] = {
         0x7f,  // 8
         0x67   // 9
 };
- 
+u8_t lp;
+u8_t alarm_hour;
+u8_t alarm_min;
+u8_t alarm_sec;
 u8_t remote_index;
 u8_t cmd;
+char houralarm[3];
+char minalarm[3];
+char secalarm[3];
 #define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
   
@@ -163,7 +172,7 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
               if (data[0]=='6') remote_index=6;
               if (data[0]== 'x') remote_index=255;
               //if (remote_index==255) printf("all remotes will act on cmd\n");
-              //printf("remote%d\n",remote_index);
+              printf("remote%d\n",remote_index);
               if (data[1]=='1') cmd=1;
               if (data[1]=='2') cmd=2;
               if (data[1]=='3') cmd=3;
@@ -173,8 +182,17 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
               if (data[1]=='7') cmd=7;
               if (data[1]=='8') cmd=8;
               if (data[1]=='9') cmd=9;
-                
-              //printf("cmd %d\n",cmd);
+              if (cmd==1) {
+                  strncpy(&houralarm[0],&data[2],2);
+                  strncpy(&minalarm[0],&data[4],2);
+                  strncpy(&secalarm[0],&data[6],2);
+                  //printf("%s %s %s\n",houralarm,minalarm,secalarm);
+                  alarm_hour=atoi(&houralarm[0]);
+                  alarm_min=atoi(&minalarm[0]);
+                  alarm_sec=atoi(&secalarm[0]);
+                  
+              }
+               
               process_cmd(remote_index, cmd);
  
           }    
@@ -182,17 +200,50 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
      
 }
 void process_cmd(u8_t rem, u8_t cc) {
-     
-    if((strcmp(remotes[0],CYW43_HOST_NAME)==0) && (rem-1==0)) printf("need to act on cmd\n");
-    if((strcmp(remotes[1],CYW43_HOST_NAME)==0) && (rem-2==0)) printf("need to act on cmd\n");
-    if((strcmp(remotes[2],CYW43_HOST_NAME)==0) && (rem-3==0)) printf("need to act on cmd\n");
-    if((strcmp(remotes[3],CYW43_HOST_NAME)==0) && (rem-4==0)) printf("need to act on cmd\n");
-    if((strcmp(remotes[4],CYW43_HOST_NAME)==0) && (rem-5==0)) printf("need to act on cmd\n");
-    if((strcmp(remotes[5],CYW43_HOST_NAME)==0) && (rem-6==0)) printf("need to act on cmd\n");
-    if((strcmp(remotes[6],CYW43_HOST_NAME)==0) && (rem-7==0)) printf("need to act on cmd\n"); 
-    if (rem==255) printf("need to act on cmd\n");
+    
+    //printf("0x%x 0x%x 0x%x 0x%x \n",&remotes[0], &remotes[1], &remotes[2], &CYW43_HOST_NAME);
+    //printf("%s %s %s \n",remotes[0], remotes[1], remotes[2]);
+    //printf("0x%x 0x%x 0x%x \n",&remotes[3], &remotes[4], &remotes[5]);
+    //printf("%s %s %s %s\n",remotes[3], remotes[4], remotes[5],CYW43_HOST_NAME);
+    rr[0] = strcmp(remotes[0],CYW43_HOST_NAME);
+    rr[1]= strcmp(remotes[1],CYW43_HOST_NAME);
+    rr[2] = strcmp(remotes[2],CYW43_HOST_NAME); 
+    rr[3]= strcmp(remotes[3],CYW43_HOST_NAME);
+    rr[4] = strcmp(remotes[4],CYW43_HOST_NAME);
+    rr[5] = strcmp(remotes[5],CYW43_HOST_NAME);
+
+         
+    if((rr[0]==0) && (rem == 1)) printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+    if((rr[1]==0) && (rem == 2)) printf("%s executes  rr %d rem %d\n", remotes[1],rr[1],rem);
+    if((rr[2]==0) && (rem == 3)) printf("%s executes  rr %d rem %d\n", remotes[2],rr[2],rem);
+    if((rr[3]==0) && (rem == 4)) printf("%s executes  rr %d rem %d\n", remotes[3],rr[3],rem);
+    if((rr[4]==0) && (rem == 5)) printf("%s executes  rr %d rem %d\n", remotes[4],rr[4],rem);
+    if((rr[5]==0) && (rem == 6)) printf("%s executes  rr %d rem %d\n", remotes[5],rr[5],rem);
+    
+         
+    if (rem==255) printf("all remotes execute\n");
+    printf("%02d %02d %02d\n",alarm_hour,alarm_min,alarm_sec);
     printf("rem %d cc %d %s\n",rem,cc,CYW43_HOST_NAME);
+    /*
+     void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
+    		palarm->day = pt_ntp->day;
+		//palarm->dotw = 0;
+		palarm->hour = pt_ntp->hour;
+		palarm->min = pt_ntp->min + 1;
+		palarm->sec = pt_ntp->sec;
+		rtc_set_flag=1;
+    	// Start the RTC
+    	rtc_init();
+    	rtc_set_datetime(&t);
+		sleep_us(64);
+		rtc_set_alarm(&alarm, &alarm_callback);
+
+    */
 }
+
+void update_alarm(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
+    
+}    
 static void
 mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len)
 {
