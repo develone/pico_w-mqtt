@@ -328,7 +328,7 @@ mqtt_example_init(void)
   strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
   payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
   printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
-  mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
+  mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 */   
           
 #endif /* LWIP_TCP */
