@@ -41,6 +41,7 @@ int rr[6];
 #include "pico/util/datetime.h"
 //char rectime[19];
 static volatile bool fired = false;
+u8_t alarm_flg=0;
 static void alarm_callback(void) {
     datetime_t t = {0};
     rtc_get_datetime(&t);
@@ -48,8 +49,11 @@ static void alarm_callback(void) {
     char *datetime_str = &datetime_buf[0];
     datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
     printf("Alarm Fired At %s\n", datetime_str);
+    sprintf(tmp,"Alarm Fired %s ",datetime_str);
+    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     stdio_flush();
     fired = true;
+    alarm_flg=1;
 }
  
 typedef struct NTP_T_ {
@@ -224,31 +228,37 @@ void process_cmd(u8_t rem, u8_t cc) {
     if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
          printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
          printf("all remotes execute\n");
+         alarm_flg=0;
          rtc_set_alarm(&alarm, &alarm_callback);
     }
     if(((rr[1]==0) && (rem == 2)) || (rem==255)) {
         printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
         printf("all remotes execute\n");
+        alarm_flg=0;
         rtc_set_alarm(&alarm, &alarm_callback);
     }  
     if(((rr[2]==0) && (rem == 3)) || (rem==255)) {
          printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
          printf("all remotes execute\n");
+         alarm_flg=0;
          rtc_set_alarm(&alarm, &alarm_callback);
     }
     if(((rr[3]==0) && (rem == 4)) || (rem==255)) {
         printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
         printf("all remotes execute\n");
+        alarm_flg=0;
         rtc_set_alarm(&alarm, &alarm_callback);
     }  
     if(((rr[4]==0) && (rem == 5)) || (rem==255)) {
          printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
          printf("all remotes execute\n");
+		 alarm_flg=0;	
          rtc_set_alarm(&alarm, &alarm_callback);
     }
     if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
         printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
         printf("all remotes execute\n");
+        alarm_flg=0;
         rtc_set_alarm(&alarm, &alarm_callback);
     }  
  
