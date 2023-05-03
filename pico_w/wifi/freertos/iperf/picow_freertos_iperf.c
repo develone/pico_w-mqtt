@@ -132,12 +132,8 @@ u16_t mqtt_port = 1883;
 char PUB_PAYLOAD[] = "this is a message from pico_w ctrl 0       ";
 char PUB_PAYLOAD_SCR[] = "this is a message from pico_w ctrl 0       ";
 char PUB_EXTRA_ARG[] = "test";
-
-char PUB_PAYLOAD1[] = "this is a pico status       ";
-char PUB_PAYLOAD_SCR1[] = "this is a pico status       ";
-char PUB_EXTRA_ARG1[] = "test1";
 u16_t payload_size;
-u16_t payload1_size;
+
 static ip_addr_t mqtt_ip LWIP_MQTT_EXAMPLE_IPADDR_INIT;
 static mqtt_client_t* mqtt_client;
  
@@ -215,39 +211,50 @@ void process_cmd(u8_t rem, u8_t cc) {
     rr[3]= strcmp(remotes[3],CYW43_HOST_NAME);
     rr[4] = strcmp(remotes[4],CYW43_HOST_NAME);
     rr[5] = strcmp(remotes[5],CYW43_HOST_NAME);
-
-         
-    if((rr[0]==0) && (rem == 1)) printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
-    if((rr[1]==0) && (rem == 2)) printf("%s executes  rr %d rem %d\n", remotes[1],rr[1],rem);
-    if((rr[2]==0) && (rem == 3)) printf("%s executes  rr %d rem %d\n", remotes[2],rr[2],rem);
-    if((rr[3]==0) && (rem == 4)) printf("%s executes  rr %d rem %d\n", remotes[3],rr[3],rem);
-    if((rr[4]==0) && (rem == 5)) printf("%s executes  rr %d rem %d\n", remotes[4],rr[4],rem);
-    if((rr[5]==0) && (rem == 6)) printf("%s executes  rr %d rem %d\n", remotes[5],rr[5],rem);
     
-         
-    if (rem==255) printf("all remotes execute\n");
     printf("%02d %02d %02d\n",alarm_hour,alarm_min,alarm_sec);
     printf("rem %d cc %d %s\n",rem,cc,CYW43_HOST_NAME);
-    /*
-     void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
-    		palarm->day = pt_ntp->day;
-		//palarm->dotw = 0;
-		palarm->hour = pt_ntp->hour;
-		palarm->min = pt_ntp->min + 1;
-		palarm->sec = pt_ntp->sec;
-		rtc_set_flag=1;
-    	// Start the RTC
-    	rtc_init();
-    	rtc_set_datetime(&t);
-		sleep_us(64);
-		rtc_set_alarm(&alarm, &alarm_callback);
+    printf("old %d %02d %02d %02d\n",rtc_set_flag,palarm->hour, palarm->min, palarm->sec);
+    palarm->hour = alarm_hour;
+    palarm->min = alarm_min;
+    palarm->sec = alarm_sec;
+    printf("%02d %02d %02d\n",palarm->hour,palarm->min, palarm->sec);
 
-    */
+         
+    if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
+         printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+         printf("all remotes execute\n");
+         rtc_set_alarm(&alarm, &alarm_callback);
+    }
+    if(((rr[1]==0) && (rem == 2)) || (rem==255)) {
+        printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+        printf("all remotes execute\n");
+        rtc_set_alarm(&alarm, &alarm_callback);
+    }  
+    if(((rr[2]==0) && (rem == 3)) || (rem==255)) {
+         printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+         printf("all remotes execute\n");
+         rtc_set_alarm(&alarm, &alarm_callback);
+    }
+    if(((rr[3]==0) && (rem == 4)) || (rem==255)) {
+        printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+        printf("all remotes execute\n");
+        rtc_set_alarm(&alarm, &alarm_callback);
+    }  
+    if(((rr[4]==0) && (rem == 5)) || (rem==255)) {
+         printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+         printf("all remotes execute\n");
+         rtc_set_alarm(&alarm, &alarm_callback);
+    }
+    if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
+        printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
+        printf("all remotes execute\n");
+        rtc_set_alarm(&alarm, &alarm_callback);
+    }  
+ 
+    
 }
 
-void update_alarm(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
-    
-}    
 static void
 mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len)
 {
@@ -450,10 +457,6 @@ cyw43_arch_lwip_end();
   strcpy(PUB_PAYLOAD_SCR,PUB_PAYLOAD);
   strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
   payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
-  
-  strcpy(PUB_PAYLOAD_SCR1,PUB_PAYLOAD1);
-  strcat( PUB_PAYLOAD_SCR1,CYW43_HOST_NAME);
-  payload1_size = sizeof(PUB_PAYLOAD_SCR1) + 7;
   //printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
   //sprintf(tmp,"mqtt_connect 0x%x ",check_mqtt_connected);
   //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
@@ -481,8 +484,7 @@ cyw43_arch_lwip_end();
   mqtt_client_is_connected 1 if connected to server, 0 otherwise 
   */
   cyw43_arch_lwip_begin();	
-  mqtt_publish(mqtt_client,"update/memo",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
-  mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR1,payload1_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG1);
+  mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
   cyw43_arch_lwip_end();	
         vTaskDelay(1000);
     }
@@ -655,6 +657,8 @@ void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
         rtc_get_datetime(&t);
         datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
         printf("\r%s      ", datetime_str);
+        printf("0x%x 0x%x\n",&t,&alarm);
+        printf("pt 0x%x palarm 0x%x\n",pt,palarm);
 }
 /*needed for ntp*/
 // Called with results of operation
