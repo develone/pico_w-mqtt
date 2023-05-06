@@ -88,21 +88,15 @@ gpio will be an additional freertos task
 */
 #define FIRST_GPIO 2
 #define BUTTON_GPIO (FIRST_GPIO+7)
-
+u8_t bit2=1;
+u8_t bit3=1;
+u8_t bit4=1;
+u8_t bit5=1;
+u8_t u8_tbits25;
+char bits25[2];
 // This array converts a number 0-9 to a bit pattern to send to the GPIOs
 
-int bits[10] = {
-        0x3f,  // 0
-        0x06,  // 1
-        0x5b,  // 2
-        0x4f,  // 3
-        0x66,  // 4
-        0x6d,  // 5
-        0x7d,  // 6
-        0x07,  // 7
-        0x7f,  // 8
-        0x67   // 9
-};
+ 
 u8_t lp;
 u8_t alarm_hour;
 u8_t alarm_min;
@@ -112,6 +106,7 @@ u8_t cmd;
 char houralarm[3];
 char minalarm[3];
 char secalarm[3];
+
 #define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
   
@@ -196,7 +191,10 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
                   alarm_sec=atoi(&secalarm[0]);
                   
               }
-               
+ 
+              strncpy(&bits25[0],&data[2],1);
+              u8_tbits25=atoi(&bits25[0]);
+              printf("data[2] %c u8_tbits25 %d \n",data[2],u8_tbits25);
               process_cmd(remote_index, cmd);
  
           }    
@@ -216,15 +214,15 @@ void process_cmd(u8_t rem, u8_t cc) {
     rr[4] = strcmp(remotes[4],CYW43_HOST_NAME);
     rr[5] = strcmp(remotes[5],CYW43_HOST_NAME);
     
-    printf("%02d %02d %02d\n",alarm_hour,alarm_min,alarm_sec);
+    //printf("%02d %02d %02d\n",alarm_hour,alarm_min,alarm_sec);
     printf("rem %d cc %d %s\n",rem,cc,CYW43_HOST_NAME);
-    printf("old %d %02d %02d %02d\n",rtc_set_flag,palarm->hour, palarm->min, palarm->sec);
+    //printf("old %d %02d %02d %02d\n",rtc_set_flag,palarm->hour, palarm->min, palarm->sec);
     palarm->hour = alarm_hour;
     palarm->min = alarm_min;
     palarm->sec = alarm_sec;
-    printf("%02d %02d %02d\n",palarm->hour,palarm->min, palarm->sec);
+    //printf("%02d %02d %02d\n",palarm->hour,palarm->min, palarm->sec);
 
-         
+    if(cc==1) {     
     if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
          printf("%s executes  rr %d rem %d\n", remotes[0],rr[0],rem);
          printf("all remotes execute\n");
@@ -260,9 +258,202 @@ void process_cmd(u8_t rem, u8_t cc) {
         printf("all remotes execute\n");
         alarm_flg=0;
         rtc_set_alarm(&alarm, &alarm_callback);
-    }  
- 
-    
+    }    
+    } /*cmd = 1*/
+    if(cc==2) { 
+        if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
+            if(u8_tbits25==0) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==1) {
+                bit2=1;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==2) {
+                bit2=0;
+                bit3=1;
+                bit4=0;
+                bit5=0;
+            } 
+            else if(u8_tbits25==3) {
+                bit2=0;
+                bit3=0;
+                bit4=1;
+                bit5=0;
+            } 
+            else if(u8_tbits25==4) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=1;
+            }  
+        } /*remote1*/   
+        if(((rr[1]==0) && (rem == 2)) || (rem==255)) {
+            if(u8_tbits25==0) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==1) {
+                bit2=1;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==2) {
+                bit2=0;
+                bit3=1;
+                bit4=0;
+                bit5=0;
+            } 
+            else if(u8_tbits25==3) {
+                bit2=0;
+                bit3=0;
+                bit4=1;
+                bit5=0;
+            } 
+            else if(u8_tbits25==4) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=1;
+            }   
+        } /*remote2*/
+        if(((rr[2]==0) && (rem == 3)) || (rem==255)) {
+            if(u8_tbits25==0) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==1) {
+                bit2=1;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==2) {
+                bit2=0;
+                bit3=1;
+                bit4=0;
+                bit5=0;
+            } 
+            else if(u8_tbits25==3) {
+                bit2=0;
+                bit3=0;
+                bit4=1;
+                bit5=0;
+            } 
+            else if(u8_tbits25==4) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=1;
+            }   
+        } /*remote3*/
+        if(((rr[3]==0) && (rem == 4)) || (rem==255)) {
+            if(u8_tbits25==0) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==1) {
+                bit2=1;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+            else if(u8_tbits25==2) {
+                bit2=0;
+                bit3=1;
+                bit4=0;
+                bit5=0;
+            } 
+            else if(u8_tbits25==3) {
+                bit2=0;
+                bit3=0;
+                bit4=1;
+                bit5=0;
+            } 
+            else if(u8_tbits25==4) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=1;
+            }   
+        } /*remote4*/                                  
+        if(((rr[4]==0) && (rem == 5)) || (rem==255)) {
+            if(u8_tbits25==0) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+        else if(u8_tbits25==1) {
+            bit2=1;
+            bit3=0;
+            bit4=0;
+            bit5=0;
+        }
+        else if(u8_tbits25==2) {
+            bit2=0;
+            bit3=1;
+            bit4=0;
+            bit5=0;
+        } 
+        else if(u8_tbits25==3) {
+            bit2=0;
+            bit3=0;
+            bit4=1;
+            bit5=0;
+        } 
+        else if(u8_tbits25==4) {
+            bit2=0;
+            bit3=0;
+            bit4=0;
+            bit5=1;
+        }    
+    }/*remote5*/
+        if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
+            if(u8_tbits25==0) {
+                bit2=0;
+                bit3=0;
+                bit4=0;
+                bit5=0;
+            }
+        else if(u8_tbits25==1) {
+            bit2=1;
+            bit3=0;
+            bit4=0;
+            bit5=0;
+        }
+        else if(u8_tbits25==2) {
+            bit2=0;
+            bit3=1;
+            bit4=0;
+            bit5=0;
+        } 
+        else if(u8_tbits25==3) {
+            bit2=0;
+            bit3=0;
+            bit4=1;
+            bit5=0;
+        } 
+        else if(u8_tbits25==4) {
+            bit2=0;
+            bit3=0;
+            bit4=0;
+            bit5=1;
+        }    
+    }/*remote6*/    
+    }/*cmd = 2*/
 }
 
 static void
@@ -406,44 +597,43 @@ void gpio_task(__unused void *params) {
         
 //We could use gpio_set_dir_out_masked() here
 
-    for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 7; gpio++) {
-        gpio_init(gpio);
-        gpio_set_dir(gpio, GPIO_OUT);
+    //for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 7; gpio++) {
+        gpio_init(FIRST_GPIO);
+        gpio_set_dir(FIRST_GPIO, GPIO_OUT);
+        gpio_set_outover(FIRST_GPIO, GPIO_OVERRIDE_INVERT);
+        
+        gpio_init(FIRST_GPIO+1);
+        gpio_set_dir(FIRST_GPIO+1, GPIO_OUT);
+        gpio_set_outover(FIRST_GPIO+1, GPIO_OVERRIDE_INVERT);
+        
+        gpio_init(FIRST_GPIO+2);
+        gpio_set_dir(FIRST_GPIO+2, GPIO_OUT);
+        gpio_set_outover(FIRST_GPIO+2, GPIO_OVERRIDE_INVERT);
+        
+        gpio_init(FIRST_GPIO+3);
+        gpio_set_dir(FIRST_GPIO+3, GPIO_OUT);
+        gpio_set_outover(FIRST_GPIO+3, GPIO_OVERRIDE_INVERT);
+        
+        gpio_init(FIRST_GPIO+4);
+        gpio_set_dir(FIRST_GPIO+4, GPIO_OUT);
+        gpio_set_outover(FIRST_GPIO+4, GPIO_OVERRIDE_INVERT);
         // Our bitmap above has a bit set where we need an LED on, BUT, we are pulling low to light
         // so invert our output
-        gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
-    }
+        //gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
+    //}
 
-    gpio_init(BUTTON_GPIO);
-    gpio_set_dir(BUTTON_GPIO, GPIO_IN);
-    // We are using the button to pull down to 0v when pressed, so ensure that when
-    // unpressed, it uses internal pull ups. Otherwise when unpressed, the input will
-    // be floating.
-    gpio_pull_up(BUTTON_GPIO);
-
-    //int val = 0;
+ 
     while (true) {
-        int val = 0;
-        if (!gpio_get(BUTTON_GPIO)) {
-            if (val == 9) {
-                val = 0;
-            } else {
-                val++;
-            }
-        } else if (val == 0) {
-            val = 9;
-        } else {
-            val--;
-        }
-
-        // We are starting with GPIO 2, our bitmap starts at bit 0 so shift to start at 2.
-        int32_t mask = bits[val] << FIRST_GPIO;
-        gpio_set_mask(mask);
-        sleep_ms(250);
-        gpio_clr_mask(mask);
-    
         
-        vTaskDelay(200);
+        gpio_put(FIRST_GPIO,bit2);
+        gpio_put(FIRST_GPIO+1,bit3);
+        gpio_put(FIRST_GPIO+2,bit4);
+        gpio_put(FIRST_GPIO+3,bit5);
+        //gpio_put(FIRST_GPIO+3,bit5);
+        //if(cmd==2) printf("%01d %01d %01d %d01 %01d\n",bit2,bit3,bit4,bit5);
+        //printf("%01d %01d %01d %d01 \n",bit2,bit3,bit4,bit5);
+        
+        vTaskDelay(800);
     }
 }
 
@@ -566,9 +756,10 @@ void main_task(__unused void *params) {
         	exit(1);
     	} else {
         	printf("Connected.\n");
+            printf("%01d %01d %01d  \n",bit2,bit3,bit4);
  			sprintf(tmp,"Connected. iperf server %s %u  ",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-			//sprintf(tmp,"starting watchdog timer task ");
+			//sprintf(tmp,"starting watchdog timer task ")
 			//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
 			//printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
 			//printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
@@ -667,7 +858,7 @@ void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
         rtc_get_datetime(&t);
         datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
         printf("\r%s      ", datetime_str);
-        printf("0x%x 0x%x\n",&t,&alarm);
+        //printf("0x%x 0x%x\n",&t,&alarm);
         printf("pt 0x%x palarm 0x%x\n",pt,palarm);
 }
 /*needed for ntp*/
