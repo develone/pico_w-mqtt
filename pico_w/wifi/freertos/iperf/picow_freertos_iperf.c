@@ -86,14 +86,15 @@ char *datetime_str = &datetime_buf[0];
 /*needed for GPIO from pico-examples/gpio/hello_7segment/hello_7segment.c
 gpio will be an additional freertos task
 */
-#define FIRST_GPIO 2
+#define FIRST_GPIO 18
 #define BUTTON_GPIO (FIRST_GPIO+7)
-u8_t bit2=1;
-u8_t bit3=1;
-u8_t bit4=1;
-u8_t bit5=1;
-u8_t u8_tbits25;
+int bit2=1;
+int bit3=1;
+int bit4=1;
+int bit5=1;
+uint tbits25;
 char bits25[2];
+u8_t reset_remote=0;
 // This array converts a number 0-9 to a bit pattern to send to the GPIOs
 
  
@@ -193,8 +194,8 @@ mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
               }
  
               strncpy(&bits25[0],&data[2],1);
-              u8_tbits25=atoi(&bits25[0]);
-              printf("data[2] %c u8_tbits25 %d \n",data[2],u8_tbits25);
+              tbits25=atoi(&bits25[0]);
+              printf("data[2] %c tbits25 %d \n",data[2],tbits25);
               process_cmd(remote_index, cmd);
  
           }    
@@ -262,31 +263,31 @@ void process_cmd(u8_t rem, u8_t cc) {
     } /*cmd = 1*/
     if(cc==2) { 
         if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
-            if(u8_tbits25==0) {
+            if(tbits25==0) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==1) {
+            if(tbits25==1) {
                 bit2=1;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==2) {
+            if(tbits25==2) {
                 bit2=0;
                 bit3=1;
                 bit4=0;
                 bit5=0;
             } 
-            else if(u8_tbits25==3) {
+            if(tbits25==3) {
                 bit2=0;
                 bit3=0;
                 bit4=1;
                 bit5=0;
             } 
-            else if(u8_tbits25==4) {
+            if(tbits25==4) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
@@ -294,31 +295,31 @@ void process_cmd(u8_t rem, u8_t cc) {
             }  
         } /*remote1*/   
         if(((rr[1]==0) && (rem == 2)) || (rem==255)) {
-            if(u8_tbits25==0) {
+            if(tbits25==0) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==1) {
+            if(tbits25==1) {
                 bit2=1;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==2) {
+            if(tbits25==2) {
                 bit2=0;
                 bit3=1;
                 bit4=0;
                 bit5=0;
             } 
-            else if(u8_tbits25==3) {
+            if(tbits25==3) {
                 bit2=0;
                 bit3=0;
                 bit4=1;
                 bit5=0;
             } 
-            else if(u8_tbits25==4) {
+            else if(tbits25==4) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
@@ -326,31 +327,31 @@ void process_cmd(u8_t rem, u8_t cc) {
             }   
         } /*remote2*/
         if(((rr[2]==0) && (rem == 3)) || (rem==255)) {
-            if(u8_tbits25==0) {
+            if(tbits25==0) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==1) {
+            if(tbits25==1) {
                 bit2=1;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==2) {
+            if(tbits25==2) {
                 bit2=0;
                 bit3=1;
                 bit4=0;
                 bit5=0;
             } 
-            else if(u8_tbits25==3) {
+            if(tbits25==3) {
                 bit2=0;
                 bit3=0;
                 bit4=1;
                 bit5=0;
             } 
-            else if(u8_tbits25==4) {
+            if(tbits25==4) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
@@ -358,31 +359,31 @@ void process_cmd(u8_t rem, u8_t cc) {
             }   
         } /*remote3*/
         if(((rr[3]==0) && (rem == 4)) || (rem==255)) {
-            if(u8_tbits25==0) {
+            if(tbits25==0) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==1) {
+            if(tbits25==1) {
                 bit2=1;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-            else if(u8_tbits25==2) {
+            if(tbits25==2) {
                 bit2=0;
                 bit3=1;
                 bit4=0;
                 bit5=0;
             } 
-            else if(u8_tbits25==3) {
+            else if(tbits25==3) {
                 bit2=0;
                 bit3=0;
                 bit4=1;
                 bit5=0;
             } 
-            else if(u8_tbits25==4) {
+            if(tbits25==4) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
@@ -390,70 +391,110 @@ void process_cmd(u8_t rem, u8_t cc) {
             }   
         } /*remote4*/                                  
         if(((rr[4]==0) && (rem == 5)) || (rem==255)) {
-            if(u8_tbits25==0) {
+            if(tbits25==0) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-        else if(u8_tbits25==1) {
-            bit2=1;
-            bit3=0;
-            bit4=0;
-            bit5=0;
-        }
-        else if(u8_tbits25==2) {
-            bit2=0;
-            bit3=1;
-            bit4=0;
-            bit5=0;
-        } 
-        else if(u8_tbits25==3) {
-            bit2=0;
-            bit3=0;
-            bit4=1;
-            bit5=0;
-        } 
-        else if(u8_tbits25==4) {
-            bit2=0;
-            bit3=0;
-            bit4=0;
-            bit5=1;
-        }    
+	    if(tbits25==1) {
+		bit2=1;
+		bit3=0;
+		bit4=0;
+		bit5=0;
+	    }
+	    if(tbits25==2) {
+		bit2=0;
+		bit3=1;
+		bit4=0;
+		bit5=0;
+	    } 
+	    if(tbits25==3) {
+		bit2=0;
+		bit3=0;
+		bit4=1;
+		bit5=0;
+	    } 
+	    if(tbits25==4) {
+		bit2=0;
+		bit3=0;
+		bit4=0;
+		bit5=1;
+	    }    
     }/*remote5*/
         if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
-            if(u8_tbits25==0) {
+            if(tbits25==0) {
                 bit2=0;
                 bit3=0;
                 bit4=0;
                 bit5=0;
             }
-        else if(u8_tbits25==1) {
-            bit2=1;
-            bit3=0;
-            bit4=0;
-            bit5=0;
-        }
-        else if(u8_tbits25==2) {
-            bit2=0;
-            bit3=1;
-            bit4=0;
-            bit5=0;
-        } 
-        else if(u8_tbits25==3) {
-            bit2=0;
-            bit3=0;
-            bit4=1;
-            bit5=0;
-        } 
-        else if(u8_tbits25==4) {
-            bit2=0;
-            bit3=0;
-            bit4=0;
-            bit5=1;
-        }    
-    }/*remote6*/    
+	    if(tbits25==1) {
+		bit2=1;
+		bit3=0;
+		bit4=0;
+		bit5=0;
+	    }
+	    if(tbits25==2) {
+		bit2=0;
+		bit3=1;
+		bit4=0;
+		bit5=0;
+	    } 
+	    if(tbits25==3) {
+		bit2=0;
+		bit3=0;
+		bit4=1;
+		bit5=0;
+	    } 
+	    if(tbits25==4) {
+		bit2=0;
+		bit3=0;
+		bit4=0;
+		bit5=1;
+	    }    
+    }/*remote6*/
+    printf("cmd2 %d %d %d %d \n",bit2,bit3,bit4,bit5);    
     }/*cmd = 2*/
+    if(cc==3) {
+	if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
+	    reset_remote=1;
+	    watchdog_enable(10, 1);
+	    while(reset_remote) {
+	    }
+	}
+	if(((rr[1]==0) && (rem == 2)) || (rem==255)) {
+	    reset_remote=1;
+	    watchdog_enable(10, 1);
+	    while(reset_remote) {
+	    };
+	}
+	if(((rr[2]==0) && (rem == 3)) || (rem==255)) {
+	    reset_remote=1;
+	    watchdog_enable(10, 1);
+	    while(reset_remote) {
+	    }
+	}
+	if(((rr[3]==0) && (rem == 4)) || (rem==255)) {
+	    reset_remote=1;
+	    watchdog_enable(10, 1);
+	    while(reset_remote) {
+	    }
+	}
+	if(((rr[4]==0) && (rem == 5)) || (rem==255)) {
+	    reset_remote=1;
+	    watchdog_enable(10, 1);
+	    while(reset_remote) {
+	    }
+	}
+	if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
+	    reset_remote=1;
+	    watchdog_enable(10, 1);
+	    while(reset_remote) {
+	    }
+	}
+	
+    }
 }
 
 static void
@@ -756,7 +797,7 @@ void main_task(__unused void *params) {
         	exit(1);
     	} else {
         	printf("Connected.\n");
-            printf("%01d %01d %01d  \n",bit2,bit3,bit4);
+            printf("%d %d %d %d\n",bit2,bit3,bit4,bit5);
  			sprintf(tmp,"Connected. iperf server %s %u  ",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
 			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
 			//sprintf(tmp,"starting watchdog timer task ")
