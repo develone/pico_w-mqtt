@@ -1,0 +1,30 @@
+#!/bin/bash
+#first char 1, 2, 3, 4, 5, 6 or x all remotes
+#2nd char  1, 2, 3, 4, 5, 6, 7, 8, 9 to to be defined.
+ 
+#3rd & 4th are alarmhour when the 2nd char is 1
+#6th & 7th are alarmmin when the 2nd char is 1
+#8th & 9th are arlamsec when the 2nd char is 1 
+#mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m '520955150a' bit2,bit3,bit4,and bit5 on 0000
+#remote5                                                                         
+#data[2] 0 u8_tbits25 0                                                          
+#rem 5 cc 2 remote5
+#mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m '521955150a' bit2 off, bit3 on, bit4 on, and bit5 on 0001
+#remote5                                                                         
+#data[2] 1 u8_tbits25 1                                                          
+#rem 5 cc 2 remote5
+#mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m '522955150a'  bit2 on, bit3 off, bit4 on, and bit5 on 0010
+#remote5                                                                         
+#data[2] 2 u8_tbits25 2                                                          
+#rem 5 cc 2 remote5
+#mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m '523955150a' bit2 on, bit3 on, bit4 off, and bit5 on 0100
+#remote5                                                                         
+#data[2] 3 u8_tbits25 3                                                          
+#rem 5 cc 2 remote5
+#mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m '524955150a' bit2 on, bit3 on, bit4 on, and bit5 off 1000
+#remote5                                                                         
+#data[2] 4 u8_tbits25 4                                                          
+#rem 5 cc 2 remote5
+mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m 'x31820000a'
+ 
+ 
