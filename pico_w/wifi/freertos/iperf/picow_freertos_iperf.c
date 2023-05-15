@@ -95,8 +95,23 @@ int bit5=1;
 uint tbits25;
 char bits25[2];
 u8_t reset_remote=0;
+int val = 0;
+int loop;
 // This array converts a number 0-9 to a bit pattern to send to the GPIOs
-
+int bits[10] = {
+        0x3f,  // 0
+        0x3e,  // 1
+        0x3d,  // 2
+        0x3c,  // 3
+        0x3b,  // 4
+        0x3a,  // 5
+        0x39,  // 6
+        0x38,  // 7
+        0x37,  // 8
+        0x36   // 9
+};
+// This array converts a number 0-9 to a bit pattern to send to the GPIOs
+int32_t mask;
  
 u8_t lp;
 u8_t alarm_hour;
@@ -423,38 +438,17 @@ void process_cmd(u8_t rem, u8_t cc) {
 	    }    
     }/*remote5*/
         if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
-            if(tbits25==0) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-	    if(tbits25==1) {
-		bit2=1;
-		bit3=0;
-		bit4=0;
-		bit5=0;
+	    for(loop=0;loop<10;loop++) {
+		if(tbits25==loop) {
+		    val=loop;
+		    //gpio_clr_mask(mask);
+		    mask = bits[val] << FIRST_GPIO;
+		    sprintf(tmp,"val %d ",val);
+		    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+		}
 	    }
-	    if(tbits25==2) {
-		bit2=0;
-		bit3=1;
-		bit4=0;
-		bit5=0;
-	    } 
-	    if(tbits25==3) {
-		bit2=0;
-		bit3=0;
-		bit4=1;
-		bit5=0;
-	    } 
-	    if(tbits25==4) {
-		bit2=0;
-		bit3=0;
-		bit4=0;
-		bit5=1;
-	    }    
     }/*remote6*/
-    printf("cmd2 %d %d %d %d \n",bit2,bit3,bit4,bit5);    
+    //printf("cmd2 %d %d %d %d \n",bit2,bit3,bit4,bit5);    
     }/*cmd = 2*/
     if(cc==3) {
 	if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
@@ -600,7 +594,7 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 /*needed for ntp*/
 void ntp_task(__unused void *params) {
     //bool on = false;
-    printf("ntp_task starts\n");
+    //printf("ntp_task starts\n");
 	run_ntp_test();
     while (true) {
 #if 0 && configNUM_CORES > 1
@@ -625,9 +619,13 @@ void watchdog_task(__unused void *params) {
 	 
 	//if (wifi_connected == 0) watchdog_update();
 	watchdog_update();
+    
  
        vTaskDelay(200);
     }
+}
+void gpio_a_f(void) {
+    gpio_set_mask(mask);    
 }
 
 void gpio_task(__unused void *params) {
@@ -638,38 +636,16 @@ void gpio_task(__unused void *params) {
         
 //We could use gpio_set_dir_out_masked() here
 
-    //for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 7; gpio++) {
-        gpio_init(FIRST_GPIO);
-        gpio_set_dir(FIRST_GPIO, GPIO_OUT);
-        gpio_set_outover(FIRST_GPIO, GPIO_OVERRIDE_INVERT);
-        
-        gpio_init(FIRST_GPIO+1);
-        gpio_set_dir(FIRST_GPIO+1, GPIO_OUT);
-        gpio_set_outover(FIRST_GPIO+1, GPIO_OVERRIDE_INVERT);
-        
-        gpio_init(FIRST_GPIO+2);
-        gpio_set_dir(FIRST_GPIO+2, GPIO_OUT);
-        gpio_set_outover(FIRST_GPIO+2, GPIO_OVERRIDE_INVERT);
-        
-        gpio_init(FIRST_GPIO+3);
-        gpio_set_dir(FIRST_GPIO+3, GPIO_OUT);
-        gpio_set_outover(FIRST_GPIO+3, GPIO_OVERRIDE_INVERT);
-        
-        gpio_init(FIRST_GPIO+4);
-        gpio_set_dir(FIRST_GPIO+4, GPIO_OUT);
-        gpio_set_outover(FIRST_GPIO+4, GPIO_OVERRIDE_INVERT);
-        // Our bitmap above has a bit set where we need an LED on, BUT, we are pulling low to light
-        // so invert our output
-        //gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
-    //}
+
 
  
     while (true) {
         
-        gpio_put(FIRST_GPIO,bit2);
-        gpio_put(FIRST_GPIO+1,bit3);
-        gpio_put(FIRST_GPIO+2,bit4);
-        gpio_put(FIRST_GPIO+3,bit5);
+        printf("mask %d\n",mask);
+        gpio_set_mask(mask);
+        //gpio_put(FIRST_GPIO+1,bit3);
+        //gpio_put(FIRST_GPIO+2,bit4);
+        //gpio_put(FIRST_GPIO+3,bit5);
         //gpio_put(FIRST_GPIO+3,bit5);
         //if(cmd==2) printf("%01d %01d %01d %d01 %01d\n",bit2,bit3,bit4,bit5);
         //printf("%01d %01d %01d %d01 \n",bit2,bit3,bit4,bit5);
@@ -685,6 +661,11 @@ void mqtt_task(__unused void *params) {
 mqtt_subscribe(mqtt_client,"pico/cmds", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
 cyw43_arch_lwip_end();
     while (true) {
+        cyw43_arch_lwip_begin();
+            check_mqtt_connected = mqtt_client_is_connected(mqtt_client);
+            if (check_mqtt_connected==0) printf("mqtt_connection_lost\n");
+                mqtt_connection_lost();
+        cyw43_arch_lwip_end();
 #if 0 && configNUM_CORES > 1
         static int last_core_id;
         if (portGET_CORE_ID() != last_core_id) {
@@ -701,25 +682,10 @@ cyw43_arch_lwip_end();
   //printf("%s  %d \n",PUB_PAYLOAD_SCR,sizeof(PUB_PAYLOAD_SCR));
   //sprintf(tmp,"mqtt_connect 0x%x ",check_mqtt_connected);
   //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-  cyw43_arch_lwip_begin();
-  check_mqtt_connected = mqtt_client_is_connected(mqtt_client);
-  cyw43_arch_lwip_end();
+
   //sprintf(tmp,"mq_con 0x%x ",check_mqtt_connected);
   //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-  if (check_mqtt_connected == 0) {
-    //printf("in re-connect\n");
-    mqtt_connected = 1;
-    sprintf(tmp,"in re-connect forceing watcdof rebiit %d\n",mqtt_connected);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-    cyw43_arch_lwip_begin();
-    mqtt_disconnect(mqtt_client);
-    cyw43_arch_lwip_end();
-   // mqtt_client_free(mqtt_client);
-   watchdog_enable(100, 1);
   
-    mqtt_example_init();
-    sleep_ms(1000);
-  }
   	
   /*
   mqtt_client_is_connected 1 if connected to server, 0 otherwise 
@@ -794,28 +760,51 @@ void main_task(__unused void *params) {
 		//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
         	//printf("failed to connect.\n");
+		init_pico_mqtt();
         	exit(1);
     	} else {
-        	printf("Connected.\n");
-            printf("%d %d %d %d\n",bit2,bit3,bit4,bit5);
- 			sprintf(tmp,"Connected. iperf server %s %u  ",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
-			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-			//sprintf(tmp,"starting watchdog timer task ")
-			//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-			//printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
-			//printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
-			sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d  ",mqtt_ip,mqtt_port);
-			head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-			//topofbuf = (char *)&client_message[256];
-			mqtt_example_init();
-            sleep_ms(1000);
-			//wifi_connected = 0;
+        	
     		 
     	}
 	//}	 
-	
+	init_pico_mqtt();
+    while(true) {
+        // not much to do as LED is in another task, and we're using RAW (callback) lwIP API
+ 
+        vTaskDelay(10000);
+    }
 
-	xTaskCreate(watchdog_task, "WatchdogThread", configMINIMAL_STACK_SIZE, NULL, WATCHDOG_TASK_PRIORITY, NULL);
+    cyw43_arch_deinit();
+}
+
+void mqtt_connection_lost(void) {
+    if (check_mqtt_connected==0) printf("mqtt_connection_lost\n");
+}
+
+void init_pico_mqtt(void) {
+    printf("Connected.\n");
+    //printf("%d %d %d %d\n",bit2,bit3,bit4,bit5);
+    sprintf(tmp,"Connected. iperf server %s %u  ",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
+    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    //sprintf(tmp,"starting watchdog timer task ")
+    //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    //printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
+    //printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
+    sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d  ",mqtt_ip,mqtt_port);
+    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    //topofbuf = (char *)&client_message[256];
+    for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 4; gpio++) {
+        gpio_init(gpio);
+        gpio_set_dir(gpio, GPIO_OUT);
+        gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
+    }
+     
+     
+
+    mqtt_example_init();
+    sleep_ms(1000);
+    //wifi_connected = 0;
+    xTaskCreate(watchdog_task, "WatchdogThread", configMINIMAL_STACK_SIZE, NULL, WATCHDOG_TASK_PRIORITY, NULL);
     xTaskCreate(blink_task, "BlinkThread", configMINIMAL_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
     xTaskCreate(socket_task, "SOCKETThread", configMINIMAL_STACK_SIZE, NULL, SOCKET_TASK_PRIORITY, NULL);
 	xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
@@ -835,13 +824,6 @@ void main_task(__unused void *params) {
 #endif
     cyw43_arch_lwip_end();
 
-    while(true) {
-        // not much to do as LED is in another task, and we're using RAW (callback) lwIP API
- 
-        vTaskDelay(10000);
-    }
-
-    cyw43_arch_deinit();
 }
 
 void vLaunch( void) {
@@ -898,9 +880,9 @@ void set_rtc(datetime_t *pt, datetime_t *pt_ntp,datetime_t *palarm) {
 	}
         rtc_get_datetime(&t);
         datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
-        printf("\r%s      ", datetime_str);
+        //printf("\r%s      ", datetime_str);
         //printf("0x%x 0x%x\n",&t,&alarm);
-        printf("pt 0x%x palarm 0x%x\n",pt,palarm);
+        //printf("pt 0x%x palarm 0x%x\n",pt,palarm);
 }
 /*needed for ntp*/
 // Called with results of operation
@@ -916,7 +898,7 @@ static void ntp_result(NTP_T* state, int status, time_t *result) {
 		pt = &t;
 		pt_ntp = &t_ntp;
 		palarm = &alarm;
-		printf("0x%x 0x%x 0x%x\n",pt,pt_ntp,palarm);
+		//printf("0x%x 0x%x 0x%x\n",pt,pt_ntp,palarm);
 		set_rtc(pt,pt_ntp,palarm);
 		
 		//printf("%02d:%02d:%02d\n",pt->hour,pt->min,pt->sec); 
@@ -1063,7 +1045,6 @@ int main( void )
 {
     stdio_init_all();
 	preptopidata();
-	
 	head = (char *)&client_message[0];
 	tail = (char *)&client_message[0];
 	topofbuf = (char *)&client_message[0];
