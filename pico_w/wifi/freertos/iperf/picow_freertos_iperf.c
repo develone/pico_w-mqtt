@@ -283,6 +283,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     val=loop;
                     //gpio_clr_mask(mask);
                     mask = bits[val] << FIRST_GPIO;
+					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
                 }
@@ -294,6 +295,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     val=loop;
                     //gpio_clr_mask(mask);
                     mask = bits[val] << FIRST_GPIO;
+					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
                 }
@@ -305,6 +307,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     val=loop;
                     //gpio_clr_mask(mask);
                     mask = bits[val] << FIRST_GPIO;
+					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
                 }
@@ -316,6 +319,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     val=loop;
                     //gpio_clr_mask(mask);
                     mask = bits[val] << FIRST_GPIO;
+					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
                 }
@@ -327,6 +331,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     val=loop;
                     //gpio_clr_mask(mask);
                     mask = bits[val] << FIRST_GPIO;
+                    printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
                 }
@@ -338,6 +343,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     val=loop;
                     //gpio_clr_mask(mask);
                     mask = bits[val] << FIRST_GPIO;
+					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
                 }
@@ -653,14 +659,14 @@ void main_task(__unused void *params) {
 		//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
         	//printf("failed to connect.\n");
-		init_pico_mqtt();
+		
         	exit(1);
     	} else {
         	
-    		 
+   			init_pico_mqtt();
     	}
 	//}	 
-	init_pico_mqtt();
+	
     while(true) {
         // not much to do as LED is in another task, and we're using RAW (callback) lwIP API
  
