@@ -278,175 +278,70 @@ void process_cmd(u8_t rem, u8_t cc) {
     } /*cmd = 1*/
     if(cc==2) { 
         if(((rr[0]==0) && (rem == 1)) || (rem==255)) {
-            if(tbits25==0) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==1) {
-                bit2=1;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==2) {
-                bit2=0;
-                bit3=1;
-                bit4=0;
-                bit5=0;
-            } 
-            if(tbits25==3) {
-                bit2=0;
-                bit3=0;
-                bit4=1;
-                bit5=0;
-            } 
-            if(tbits25==4) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=1;
+            for(loop=0;loop<10;loop++) {
+                if(tbits25==loop) {
+                    val=loop;
+                    //gpio_clr_mask(mask);
+                    mask = bits[val] << FIRST_GPIO;
+                    sprintf(tmp,"val %d ",val);
+                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                }
             }  
         } /*remote1*/   
         if(((rr[1]==0) && (rem == 2)) || (rem==255)) {
-            if(tbits25==0) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==1) {
-                bit2=1;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==2) {
-                bit2=0;
-                bit3=1;
-                bit4=0;
-                bit5=0;
-            } 
-            if(tbits25==3) {
-                bit2=0;
-                bit3=0;
-                bit4=1;
-                bit5=0;
-            } 
-            else if(tbits25==4) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=1;
+            for(loop=0;loop<10;loop++) {
+                if(tbits25==loop) {
+                    val=loop;
+                    //gpio_clr_mask(mask);
+                    mask = bits[val] << FIRST_GPIO;
+                    sprintf(tmp,"val %d ",val);
+                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                }
             }   
         } /*remote2*/
         if(((rr[2]==0) && (rem == 3)) || (rem==255)) {
-            if(tbits25==0) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==1) {
-                bit2=1;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==2) {
-                bit2=0;
-                bit3=1;
-                bit4=0;
-                bit5=0;
-            } 
-            if(tbits25==3) {
-                bit2=0;
-                bit3=0;
-                bit4=1;
-                bit5=0;
-            } 
-            if(tbits25==4) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=1;
+            for(loop=0;loop<10;loop++) {
+                if(tbits25==loop) {
+                    val=loop;
+                    //gpio_clr_mask(mask);
+                    mask = bits[val] << FIRST_GPIO;
+                    sprintf(tmp,"val %d ",val);
+                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                }
             }   
         } /*remote3*/
         if(((rr[3]==0) && (rem == 4)) || (rem==255)) {
-            if(tbits25==0) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==1) {
-                bit2=1;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-            if(tbits25==2) {
-                bit2=0;
-                bit3=1;
-                bit4=0;
-                bit5=0;
-            } 
-            else if(tbits25==3) {
-                bit2=0;
-                bit3=0;
-                bit4=1;
-                bit5=0;
-            } 
-            if(tbits25==4) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=1;
+            for(loop=0;loop<10;loop++) {
+                if(tbits25==loop) {
+                    val=loop;
+                    //gpio_clr_mask(mask);
+                    mask = bits[val] << FIRST_GPIO;
+                    sprintf(tmp,"val %d ",val);
+                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                }
             }   
         } /*remote4*/                                  
         if(((rr[4]==0) && (rem == 5)) || (rem==255)) {
-            if(tbits25==0) {
-                bit2=0;
-                bit3=0;
-                bit4=0;
-                bit5=0;
-            }
-	    if(tbits25==1) {
-		bit2=1;
-		bit3=0;
-		bit4=0;
-		bit5=0;
-	    }
-	    if(tbits25==2) {
-		bit2=0;
-		bit3=1;
-		bit4=0;
-		bit5=0;
-	    } 
-	    if(tbits25==3) {
-		bit2=0;
-		bit3=0;
-		bit4=1;
-		bit5=0;
-	    } 
-	    if(tbits25==4) {
-		bit2=0;
-		bit3=0;
-		bit4=0;
-		bit5=1;
-	    }    
+            for(loop=0;loop<10;loop++) {
+                if(tbits25==loop) {
+                    val=loop;
+                    //gpio_clr_mask(mask);
+                    mask = bits[val] << FIRST_GPIO;
+                    sprintf(tmp,"val %d ",val);
+                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                }
+            }      
     }/*remote5*/
         if(((rr[5]==0) && (rem == 6)) || (rem==255)) {
-	    for(loop=0;loop<10;loop++) {
-		if(tbits25==loop) {
-		    val=loop;
-		    //gpio_clr_mask(mask);
-		    mask = bits[val] << FIRST_GPIO;
-		    sprintf(tmp,"val %d ",val);
-		    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-		}
-	    }
+            for(loop=0;loop<10;loop++) {
+                if(tbits25==loop) {
+                    val=loop;
+                    //gpio_clr_mask(mask);
+                    mask = bits[val] << FIRST_GPIO;
+                    sprintf(tmp,"val %d ",val);
+                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                }
+            }
     }/*remote6*/
     //printf("cmd2 %d %d %d %d \n",bit2,bit3,bit4,bit5);    
     }/*cmd = 2*/
@@ -624,9 +519,7 @@ void watchdog_task(__unused void *params) {
        vTaskDelay(200);
     }
 }
-void gpio_a_f(void) {
-    gpio_set_mask(mask);    
-}
+ 
 
 void gpio_task(__unused void *params) {
     //bool on = false;
