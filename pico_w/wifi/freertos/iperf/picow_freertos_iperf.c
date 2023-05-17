@@ -28,7 +28,7 @@
 char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"};
  
 int rr[6];
-#define GPIO_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
+//#define GPIO_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
 //#define RTC_TASK_PRIORITY			    ( tskIDLE_PRIORITY + 7UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
 #define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
@@ -88,10 +88,12 @@ gpio will be an additional freertos task
 */
 #define FIRST_GPIO 18
 #define BUTTON_GPIO (FIRST_GPIO+7)
+/*
 int bit2=1;
 int bit3=1;
 int bit4=1;
 int bit5=1;
+*/
 uint tbits25;
 char bits25[2];
 u8_t reset_remote=0;
@@ -157,7 +159,7 @@ static const struct mqtt_connect_client_info_t mqtt_client_info =
   CYW43_HOST_NAME,
   "testuser", /* user */
   "password123", /* pass */
-  0,  /* keep alive */
+  10,  /* keep alive */
   "topic_qos0", /* will_topic */
   NULL, /* will_msg */
   0,    /* will_qos */
@@ -286,6 +288,8 @@ void process_cmd(u8_t rem, u8_t cc) {
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    printf("mask %d\n",mask);
+                    gpio_set_mask(mask);
                 }
             }  
         } /*remote1*/   
@@ -298,6 +302,8 @@ void process_cmd(u8_t rem, u8_t cc) {
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    printf("mask %d\n",mask);
+                    gpio_set_mask(mask);
                 }
             }   
         } /*remote2*/
@@ -310,6 +316,8 @@ void process_cmd(u8_t rem, u8_t cc) {
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    printf("mask %d\n",mask);
+                    gpio_set_mask(mask);
                 }
             }   
         } /*remote3*/
@@ -322,6 +330,8 @@ void process_cmd(u8_t rem, u8_t cc) {
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    printf("mask %d\n",mask);
+                    gpio_set_mask(mask);
                 }
             }   
         } /*remote4*/                                  
@@ -334,6 +344,8 @@ void process_cmd(u8_t rem, u8_t cc) {
                     printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    printf("mask %d\n",mask);
+                    gpio_set_mask(mask);
                 }
             }      
     }/*remote5*/
@@ -346,6 +358,8 @@ void process_cmd(u8_t rem, u8_t cc) {
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    printf("mask %d\n",mask);
+                    gpio_set_mask(mask);
                 }
             }
     }/*remote6*/
@@ -709,7 +723,7 @@ void init_pico_mqtt(void) {
 	xTaskCreate(mqtt_task, "MQTTThread", configMINIMAL_STACK_SIZE, NULL, MQTT_TASK_PRIORITY, NULL);
     //xTaskCreate(rtc_task, "RTCThread", configMINIMAL_STACK_SIZE, NULL, RTC_TASK_PRIORITY, NULL);
     xTaskCreate(ntp_task, "NTPThread", configMINIMAL_STACK_SIZE, NULL, NTP_TASK_PRIORITY, NULL);
-    xTaskCreate(gpio_task, "GPIOThread", configMINIMAL_STACK_SIZE, NULL, GPIO_TASK_PRIORITY, NULL);
+    //xTaskCreate(gpio_task, "GPIOThread", configMINIMAL_STACK_SIZE, NULL, GPIO_TASK_PRIORITY, NULL);
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
