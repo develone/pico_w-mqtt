@@ -339,8 +339,13 @@ void process_cmd(u8_t rem, u8_t cc) {
             for(loop=0;loop<10;loop++) {
                 if(tbits25==loop) {
                     val=loop;
-                    //gpio_clr_mask(mask);
-                    mask = bits[val] << FIRST_GPIO;
+                    /*These are are fix for bits[0] &bits[1] not being read correctly*/
+                    if((bits[val]==0x746f6d65)&&(val==0)) mask = 0x3f << FIRST_GPIO;
+                    
+                    if((bits[val]==0x3565)&&(val==1)) mask = 0x3e << FIRST_GPIO;
+                    
+                    if(val>1) mask = bits[val] << FIRST_GPIO;
+                 
                     printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
