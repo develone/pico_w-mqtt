@@ -60,15 +60,17 @@ static void alarm_callback(void) {
 }
 
 /* Choose 'C' for Celsius or 'F' for Fahrenheit. */
-#define TEMPERATURE_UNITS 'C'
-
+//#define TEMPERATURE_UNITS 'F'
+char TEMPERATURE_UNITS;
+char  unit;
+float retflg;
 /* References for this implementation:
  * raspberry-pi-pico-c-sdk.pdf, Section '4.1.1. hardware_adc'
  * pico-examples/adc/adc_console/adc_console.c */
-float read_onboard_temperature(const char unit) {
+float read_onboard_temperature(char unit) {
     
     /* 12-bit conversion, assume max value == ADC_VREF == 3.3 V */
-    const float conversionFactor = 3.3f / (1 << 12);
+    float conversionFactor = 3.3f / (1 << 12);
 
     float adc = (float)adc_read() * conversionFactor;
     float tempC = 27.0f - (adc - 0.706f) / 0.001721f;
@@ -438,6 +440,17 @@ void process_cmd(u8_t rem, u8_t cc) {
 	}
 	
     }
+    if(cc==4) {
+        printf("cc=%d\n",cc);
+        unit = 'C';
+        TEMPERATURE_UNITS='C';
+        
+    }
+    if(cc==5) {
+        printf("cc=%d\n",cc);
+        unit = 'F';
+        TEMPERATURE_UNITS='F';
+    }
 }
 
 static void
@@ -572,8 +585,7 @@ void adc_task(__unused void *params) {
 	float temperature = read_onboard_temperature(TEMPERATURE_UNITS);
     sprintf(tmp,"temperature = %.02f %c ",temperature, TEMPERATURE_UNITS);
     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-        //printf("Onboard temperature = %.02f %c\n", temperature, TEMPERATURE_UNITS);
-    
+        printf("Onboard temperature = %.02f %c\n", temperature, TEMPERATURE_UNITS);
  
        vTaskDelay(20000);
     }
@@ -793,7 +805,10 @@ void init_pico_mqtt(void) {
     xTaskCreate(ntp_task, "NTPThread", configMINIMAL_STACK_SIZE, NULL, NTP_TASK_PRIORITY, NULL);
     //xTaskCreate(gpio_task, "GPIOThread", configMINIMAL_STACK_SIZE, NULL, GPIO_TASK_PRIORITY, NULL);
     xTaskCreate(adc_task, "ADCThread", configMINIMAL_STACK_SIZE, NULL, ADC_TASK_PRIORITY, NULL);
-
+    /*setting default temperature units*/
+    TEMPERATURE_UNITS = 'C';
+    unit = 'C';
+    retflg=read_onboard_temperature(unit);
 
     cyw43_arch_lwip_begin();
 #if CLIENT_TEST
