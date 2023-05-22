@@ -31,8 +31,7 @@ char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"}
 int rr[6];
 
 #define ADC_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
-//#define GPIO_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
-//#define RTC_TASK_PRIORITY			    ( tskIDLE_PRIORITY + 7UL )
+#define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
 #define MQTT_TASK_PRIORITY				( tskIDLE_PRIORITY + 4UL )  
 #define SOCKET_TASK_PRIORITY			( tskIDLE_PRIORITY + 6UL )
@@ -45,46 +44,13 @@ int rr[6];
 //char rectime[19];
 static volatile bool fired = false;
 u8_t alarm_flg=0;
-static void alarm_callback(void) {
-    datetime_t t = {0};
-    rtc_get_datetime(&t);
-    char datetime_buf[256];
-    char *datetime_str = &datetime_buf[0];
-    datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
-    printf("Alarm Fired At %s\n", datetime_str);
-    sprintf(tmp,"Alarm Fired %s ",datetime_str);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-    stdio_flush();
-    fired = true;
-    alarm_flg=1;
-}
 
 /* Choose 'C' for Celsius or 'F' for Fahrenheit. */
 //#define TEMPERATURE_UNITS 'F'
 char TEMPERATURE_UNITS;
 char  unit;
 float retflg;
-/* References for this implementation:
- * raspberry-pi-pico-c-sdk.pdf, Section '4.1.1. hardware_adc'
- * pico-examples/adc/adc_console/adc_console.c */
-float read_onboard_temperature(char unit) {
-    
-    /* 12-bit conversion, assume max value == ADC_VREF == 3.3 V */
-    float conversionFactor = 3.3f / (1 << 12);
 
-    float adc = (float)adc_read() * conversionFactor;
-    float tempC = 27.0f - (adc - 0.706f) / 0.001721f;
-
-    if (unit == 'C') {
-        return tempC;
-    } else if (unit == 'F') {
-        return tempC * 9 / 5 + 32;
-    }
-
-    return -1.0f;
-}
-
- 
 typedef struct NTP_T_ {
     ip_addr_t ntp_server_address;
     bool dns_request_sent;
@@ -117,12 +83,7 @@ gpio will be an additional freertos task
 */
 #define FIRST_GPIO 18
 #define BUTTON_GPIO (FIRST_GPIO+7)
-/*
-int bit2=1;
-int bit3=1;
-int bit4=1;
-int bit5=1;
-*/
+
 uint tbits25;
 char bits25[2];
 u8_t reset_remote=0;
@@ -143,7 +104,7 @@ int bits[10] = {
 };
 // This array converts a number 0-9 to a bit pattern to send to the GPIOs
 int32_t mask;
- 
+
 u8_t lp;
 u8_t alarm_hour;
 u8_t alarm_min;
@@ -154,10 +115,50 @@ char houralarm[3];
 char minalarm[3];
 char secalarm[3];
 
-#define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
+
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
 
 u16_t mqtt_port = 1883;
+
+char PUB_PAYLOAD_T[]="                                       ";
+char PUB_PAYLOAD_SCR_T[]="                                       ";
+char PUB_EXTRA_ARG_T[] = "test";
+u16_t payload_t_size;
+
+/* References for this implementation:
+ * raspberry-pi-pico-c-sdk.pdf, Section '4.1.1. hardware_adc'
+ * pico-examples/adc/adc_console/adc_console.c */
+float read_onboard_temperature(char unit) {
+    
+    /* 12-bit conversion, assume max value == ADC_VREF == 3.3 V */
+    float conversionFactor = 3.3f / (1 << 12);
+
+    float adc = (float)adc_read() * conversionFactor;
+    float tempC = 27.0f - (adc - 0.706f) / 0.001721f;
+
+    if (unit == 'C') {
+        return tempC;
+    } else if (unit == 'F') {
+        return tempC * 9 / 5 + 32;
+    }
+
+    return -50.0f;
+}
+
+static void alarm_callback(void) {
+    datetime_t t = {0};
+    rtc_get_datetime(&t);
+    char datetime_buf[256];
+    char *datetime_str = &datetime_buf[0];
+    datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
+    printf("Alarm Fired At %s\n", datetime_str);
+    sprintf(tmp,"Alarm Fired %s ",datetime_str);
+    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    stdio_flush();
+    fired = true;
+    alarm_flg=1;
+}
+ 
  
 #if LWIP_TCP /*LWIP_TCP*/
 
@@ -174,11 +175,7 @@ u16_t mqtt_port = 1883;
 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT
 	#endif
 	#endif
-
-char PUB_PAYLOAD[] = "this is a message from pico_w ctrl 0       ";
-char PUB_PAYLOAD_SCR[] = "this is a message from pico_w ctrl 0       ";
-char PUB_EXTRA_ARG[] = "test";
-u16_t payload_size;
+    
 
 
 static ip_addr_t mqtt_ip LWIP_MQTT_EXAMPLE_IPADDR_INIT;
@@ -378,9 +375,12 @@ void process_cmd(u8_t rem, u8_t cc) {
                     if(val>1) mask = bits[val] << FIRST_GPIO;
                  
                     printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
-                    sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-                    printf("mask %d\n",mask);
+                    //sprintf(tmp,"val %d ",val);
+                    //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                     
+					//printf("mask 0x%x\n",mask);
+                     
+
                     gpio_set_mask(mask);
                 }
             }      
@@ -394,7 +394,8 @@ void process_cmd(u8_t rem, u8_t cc) {
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
                     head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-                    printf("mask %d\n",mask);
+                    
+                    
                     gpio_set_mask(mask);
                 }
             }
@@ -583,9 +584,15 @@ void adc_task(__unused void *params) {
     while (true) {
 	 
 	float temperature = read_onboard_temperature(TEMPERATURE_UNITS);
-    sprintf(tmp,"temperature = %.02f %c ",temperature, TEMPERATURE_UNITS);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
-        printf("Onboard temperature = %.02f %c\n", temperature, TEMPERATURE_UNITS);
+     
+    
+        if (temperature != -50.0) {
+            //printf("Onboard temperature = %.02f %c\n", temperature, TEMPERATURE_UNITS);
+
+            sprintf(PUB_PAYLOAD_SCR_T,"Onboard temperature = %.02f %c %s ", temperature, TEMPERATURE_UNITS,CYW43_HOST_NAME);
+            payload_t_size = sizeof(PUB_PAYLOAD_SCR_T);
+             
+        }
  
        vTaskDelay(20000);
     }
@@ -604,41 +611,14 @@ void watchdog_task(__unused void *params) {
     }
 }
  
-
-void gpio_task(__unused void *params) {
-    //bool on = false;
-    //printf("gpio_task starts\n");
-     
- 
-        
-//We could use gpio_set_dir_out_masked() here
-
-
-
- 
-    while (true) {
-        
-        printf("mask %d\n",mask);
-        gpio_set_mask(mask);
-        //gpio_put(FIRST_GPIO+1,bit3);
-        //gpio_put(FIRST_GPIO+2,bit4);
-        //gpio_put(FIRST_GPIO+3,bit5);
-        //gpio_put(FIRST_GPIO+3,bit5);
-        //if(cmd==2) printf("%01d %01d %01d %d01 %01d\n",bit2,bit3,bit4,bit5);
-        //printf("%01d %01d %01d %d01 \n",bit2,bit3,bit4,bit5);
-        
-        vTaskDelay(800);
-    }
-}
-
 void mqtt_task(__unused void *params) {
     //bool on = false;
     //printf("mqtt_task starts\n");
     cyw43_arch_lwip_begin();
-mqtt_subscribe(mqtt_client,"pico/cmds", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
-strcpy(PUB_PAYLOAD_SCR,PUB_PAYLOAD);
-  strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
-  payload_size = sizeof(PUB_PAYLOAD_SCR) + 7;
+mqtt_subscribe(mqtt_client,"pico/cmds", 2,pub_mqtt_request_cb_t,PUB_EXTRA_ARG_T);
+strcpy(PUB_PAYLOAD_SCR_T,PUB_PAYLOAD_T);
+  //strcat( PUB_PAYLOAD_SCR,CYW43_HOST_NAME);
+  //payload_t_size = sizeof(PUB_PAYLOAD_SCR_T);
   
 
 cyw43_arch_lwip_end();
@@ -679,7 +659,7 @@ cyw43_arch_lwip_end();
   mqtt_client_is_connected 1 if connected to server, 0 otherwise 
   */
   cyw43_arch_lwip_begin();	
-  mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR,payload_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG);
+  mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR_T,payload_t_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG_T);
    cyw43_arch_lwip_end();	
         vTaskDelay(1000);
     }
