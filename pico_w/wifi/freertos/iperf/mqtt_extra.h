@@ -7,19 +7,7 @@ extern "C" {
 #include "hardware/watchdog.h"
 #include "pico/time.h"
 //void mqtt_example_init(void);
-/**************************ping**************************/
-//#include "ping.h"
-
-/**
- * PING_DEBUG: Enable debugging for PING.
- */
-//#ifndef PING_DEBUG
-//#define PING_DEBUG     LWIP_DBG_ON
 //#endif
-//#ifndef PING_ADDR
-//#define PING_ADDR "142.251.35.196"
-//#endif
-/**************************ping**************************/
 
 /**************************tcp_server**************************/
 
@@ -36,7 +24,7 @@ extern "C" {
  u8_t check_wifi_connected;
  u8_t wifi_connected = 1;
 
-char ver[7] = "0.0.07";
+char ver[7] = "0.0.08";
 #define debug_level 
 
 
