@@ -482,7 +482,13 @@ mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t st
   LWIP_UNUSED_ARG(client);
 
   LWIP_PLATFORM_DIAG(("MQTT client \"%s\" connection cb: status %d\n", client_info->client_id, (int)status));
-
+    if((int)status==256) {
+	/*connecttion with broker lost*/
+	reset_remote=1;
+	watchdog_enable(10, 1);
+	while(reset_remote) {
+	}
+    }
   if (status == MQTT_CONNECT_ACCEPTED) {
     mqtt_sub_unsub(client,
             "topic_qos1", 1,
