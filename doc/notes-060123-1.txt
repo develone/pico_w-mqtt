@@ -1,0 +1,83 @@
+These notes are created on 06/01/23
+The following 2 commands are used to compile the code.
+/home/devel/pico_w-mqtt/6remotes.sh
+/home/devel/pico_w-mqtt/build_cli.sh	see below. 
+Creates 6 folders remote1 to remote6 and executes the next six lines to compile the elf file and uf2 file.
+	the elf file which can be loaded with the ./exe-ocd.sh which calls openocd and uses 3 wire SWD on the pico_w.
+
+	the uf2 file by depressing the BOOTSEL on the pico_w.
+	
+	Before executing ./6remotes the file /home/devel/pico_w-mqtt/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c must be edit in line around 735 for ver 0.0.09.
+	as shown below.
+	   if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, "your WiFi password", CYW43_AUTH_WPA2_AES_PSK, 30000)) {
+	
+	cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote1" -DWIFI_SSID="your ssid" -DWIFI_PASSWORD="your WiFi password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+	
+	cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote2" -DWIFI_SSID="your ssid" -DWIFI_PASSWORD="your WiFi password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+	
+	cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote3" -DWIFI_SSID="your ssid" -DWIFI_PASSWORD="your WiFi password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+	
+	cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote4" -DWIFI_SSID="your ssid" -DWIFI_PASSWORD="your WiFi password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+	
+	cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote5" -DWIFI_SSID="your ssid" -DWIFI_PASSWORD="your WiFi password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+	
+	cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote6" -DWIFI_SSID="your ssid" -DWIFI_PASSWORD="your WiFi password" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+	
+	remote1
+	/home/devel/pico_w-mqtt/remote1/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf
+	/home/devel/pico_w-mqtt/remote1/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.uf2
+	
+	remote2
+	/home/devel/pico_w-mqtt/remote2/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf
+	/home/devel/pico_w-mqtt/remote2/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.uf2
+	
+	remote3
+	/home/devel/pico_w-mqtt/remote3/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf
+	/home/devel/pico_w-mqtt/remote3/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.uf2
+	
+	remote4
+	/home/devel/pico_w-mqtt/remote4/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf
+	/home/devel/pico_w-mqtt/remote4/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.uf2
+	
+	remote5
+	/home/devel/pico_w-mqtt/remote5/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf
+	/home/devel/pico_w-mqtt/remote5/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.uf2
+	
+	remote6
+	/home/devel/pico_w-mqtt/remote6/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf
+	/home/devel/pico_w-mqtt/remote6/pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.uf2
+
+In addition it compiles /home/devel/pico_w-mqtt/pi_tcp_tests/
+cli1  cli3  cli5  
+cli2  cli4  cli6   
+client.c & server.c
+
+Using the script /home/devel/pico_w-mqtt/build_cli.sh
+Each clix will connect to x remote using port 4001.
+
+This is the command to start the broker mosquitto -c /etc/mosquitto/mosquitto.conf
+which handles the subcriber and publisher
+
+The is the command that subcribes to pico/status and displays
+
+mosquitto_sub -t 'pico/status' -u 'testuser' -P 'password123'
+Onboard temperature = 30.42 C remote3 
+Onboard temperature = 31.35 C remote2 
+Onboard temperature = 33.69 C remote5 
+Onboard temperature = 31.35 C remote4 
+Onboard temperature = 29.01 C remote6 
+Onboard temperature = 30.42 C remote1
+
+Onboard temperature = 86.75 F remote1 
+Onboard temperature = 85.91 F remote3 
+Onboard temperature = 87.59 F remote2 
+Onboard temperature = 92.65 F remote5 
+Onboard temperature = 89.28 F remote4 
+Onboard temperature = 84.22 F remote6 
+
+1	pico-cmd-alarm sets the alarm HH MM SS 
+2	pico-cmd for contoling the GPIO
+3 	pico-cmd-reset
+4	pico-cmd-C Default is C for temperature
+5	pico-cmd-F Changes to F for temperature 
+ 
