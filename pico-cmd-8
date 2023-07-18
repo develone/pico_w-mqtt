@@ -5,7 +5,12 @@
 #3rd & 4th are alarmhour when the 2nd char is 1
 #6th & 7th are alarmmin when the 2nd char is 1
 #8th & 9th are arlamsec when the 2nd char is 1 
- 
+
+echo "resetting"
+
+mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m 'x38955150a'
+sleep 10
+echo "setting GPIO 8"
 mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m 'x28955150a'
  
  
