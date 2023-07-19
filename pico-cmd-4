@@ -1,0 +1,16 @@
+#!/bin/bash
+#first char 1, 2, 3, 4, 5, 6 or x all remotes
+#2nd char  1, 2, 3, 4, 5, 6, 7, 8, 9 to to be defined.
+ 
+#3rd & 4th are alarmhour when the 2nd char is 1
+#6th & 7th are alarmmin when the 2nd char is 1
+#8th & 9th are arlamsec when the 2nd char is 1 
+
+echo "resetting"
+
+mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m 'x38955150a'
+sleep 10
+echo "setting GPIO 8"
+mosquitto_pub  -h $1 -p 1883 -t 'pico/cmds' -u 'testuser' -P 'password123' -m 'x24955150a'
+ 
+ 
