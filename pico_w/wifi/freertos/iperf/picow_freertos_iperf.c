@@ -30,6 +30,8 @@ char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"}
  
 int rr[6];
 
+#define CLOSE_TASK_PRIORITY				( tskIDLE_PRIORITY + 10UL )
+#define OPEN_TASK_PRIORITY				( tskIDLE_PRIORITY + 9UL )
 #define ADC_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
 #define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
@@ -44,6 +46,8 @@ int rr[6];
 //char rectime[19];
 static volatile bool fired = false;
 u8_t alarm_flg=0;
+u8_t open_flg=0;
+u8_t close_flg=0;
 
 /* Choose 'C' for Celsius or 'F' for Fahrenheit. */
 //#define TEMPERATURE_UNITS 'F'
@@ -452,6 +456,23 @@ void process_cmd(u8_t rem, u8_t cc) {
         unit = 'F';
         TEMPERATURE_UNITS='F';
     }
+
+    if(cc==6) {
+        printf("cc=%d\n",cc);
+	printf("open task %d %d\n",open_flg,close_flg);
+	open_flg=1;
+	close_flg=0;
+	printf("open task %d %d\n",open_flg,close_flg);
+        
+    }
+    if(cc==7) {
+        printf("cc=%d\n",cc);
+        printf("close task %d %d\n",open_flg,close_flg);
+	close_flg=1;
+	open_flg=0;
+	printf("close task %d %d\n",open_flg,close_flg);
+    }
+
 }
 
 static void
@@ -559,6 +580,30 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
     //printf("packets in %u packets out %u\n", CYW43_STAT_GET(PACKET_IN_COUNT), CYW43_STAT_GET(PACKET_OUT_COUNT));
 #endif
 }
+
+/*needed for open*/
+void open_task(__unused void *params) {
+    //bool on = false;
+    printf("open_task starts\n");
+	 
+    while (true) {
+       
+        vTaskDelay(2200);
+    }
+}
+/*needed for open/
+
+/*needed for close */
+void close_task(__unused void *params) {
+    //bool on = false;
+    printf("close_task starts\n");
+	 
+    while (true) {
+       
+        vTaskDelay(2200);
+    }
+}
+/*needed for close/
 
 /*needed for ntp*/
 void ntp_task(__unused void *params) {
@@ -729,7 +774,7 @@ void main_task(__unused void *params) {
 	watchdog_enable(10000, 1);
 	//while (wifi_connected) {
     	cyw43_arch_enable_sta_mode();
-    	//printf("Connecting to Wi-Fi...\n");
+    	printf("Connecting to Wi-Fi...\n");
 		//sprintf(tmp,"Connecting to Wi-Fi...");
 		//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
@@ -792,6 +837,12 @@ void init_pico_mqtt(void) {
     //xTaskCreate(gpio_task, "GPIOThread", configMINIMAL_STACK_SIZE, NULL, GPIO_TASK_PRIORITY, NULL);
     xTaskCreate(adc_task, "ADCThread", configMINIMAL_STACK_SIZE, NULL, ADC_TASK_PRIORITY, NULL);
     /*setting default temperature units*/
+    xTaskCreate(open_task, "OPENThread", configMINIMAL_STACK_SIZE, NULL, OPEN_TASK_PRIORITY, NULL);
+    xTaskCreate(close_task, "CLOSEThread", configMINIMAL_STACK_SIZE, NULL, CLOSE_TASK_PRIORITY, NULL);
+
+
+
+
     TEMPERATURE_UNITS = 'C';
     unit = 'C';
     retflg=read_onboard_temperature(unit);
