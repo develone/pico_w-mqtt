@@ -69,7 +69,9 @@ typedef struct NTP_T_ {
 #define NTP_DELTA 2208988800 // seconds between 1 Jan 1900 and 1 Jan 1970
 #define NTP_TEST_TIME (30 * 1000)
 #define NTP_RESEND_TIME (10 * 1000)
-
+#define in1 14
+#define in2 15
+#define enA 16
 /*needed for rtc */
 datetime_t t;
 datetime_t alarm;
@@ -459,18 +461,18 @@ void process_cmd(u8_t rem, u8_t cc) {
 
     if(cc==6) {
         printf("cc=%d\n",cc);
-	printf("open task %d %d\n",open_flg,close_flg);
+	printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
 	open_flg=1;
 	close_flg=0;
-	printf("open task %d %d\n",open_flg,close_flg);
+	printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
         
     }
     if(cc==7) {
         printf("cc=%d\n",cc);
-        printf("close task %d %d\n",open_flg,close_flg);
+        printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
 	close_flg=1;
 	open_flg=0;
-	printf("close task %d %d\n",open_flg,close_flg);
+	printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
     }
 
 }
@@ -585,9 +587,25 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 void open_task(__unused void *params) {
     //bool on = false;
     printf("open_task starts\n");
+
 	 
     while (true) {
-       
+        if(open_flg==1) {
+	    printf("open_task open_flg %d\n",open_flg);
+	    gpio_put(in1,0);
+	    gpio_put(in2,1);
+	    sleep_ms(10000);
+	    printf("open_task setting in1 lo in2 hi \n");
+	    gpio_put(enA,1);
+	    sleep_ms(1000);
+	    printf("open_task setting in1 lo in2 hi enA hi \n");
+	    gpio_put(enA,0);
+	    printf("open_task setting in1 lo in2 hi enA lo \n");
+	}
+	else 
+	{
+	    printf("open_task open_flg %d\n",open_flg);
+	}	
         vTaskDelay(2200);
     }
 }
@@ -599,6 +617,24 @@ void close_task(__unused void *params) {
     printf("close_task starts\n");
 	 
     while (true) {
+	if(close_flg==1) {
+	    printf("close_task close_flg %d\n",close_flg);
+	    gpio_put(in1,1);
+	    gpio_put(in2,0);
+	    sleep_ms(10000);
+	    printf("close_task setting in1 hi in2 lo \n");
+	    printf("close_task setting in1 hi in2 lo enA hi \n");
+	    gpio_put(enA,1);
+	    sleep_ms(1000);
+	    printf("open_task setting in1 hi in2 lo enA hi \n");
+	    gpio_put(enA,0);
+	    printf("close_task setting in1 hi in2 lo enA lo \n");
+	}
+	
+	else 
+	{
+	    printf("open_task close_flg %d\n",close_flg);
+	}
        
         vTaskDelay(2200);
     }
@@ -817,6 +853,13 @@ void init_pico_mqtt(void) {
         gpio_set_dir(gpio, GPIO_OUT);
         gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
     }
+    /*initialize valve gpio*/
+    gpio_init(in1);
+    gpio_set_dir(in1, GPIO_OUT);
+    gpio_init(in2);
+    gpio_set_dir(in2, GPIO_OUT);
+    gpio_init(enA);
+    gpio_set_dir(enA, GPIO_OUT);
      
     rr[0] = strcmp(remotes[0],CYW43_HOST_NAME);
     rr[1]= strcmp(remotes[1],CYW43_HOST_NAME);
