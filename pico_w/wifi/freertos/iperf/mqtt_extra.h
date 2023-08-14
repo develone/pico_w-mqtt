@@ -24,7 +24,7 @@ extern "C" {
  u8_t check_wifi_connected;
  u8_t wifi_connected = 1;
 
-char ver[7] = "0.0.09";
+char ver[7] = "0.0.10";
 #define debug_level 
 
 

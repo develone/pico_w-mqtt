@@ -594,10 +594,10 @@ void close_task(__unused void *params) {
 	    printf("close_task close_flg %d\n",close_flg);
 	    gpio_put(in1,0);
 	    gpio_put(in2,1);
-	    sleep_ms(20000);
+	    sleep_ms(500);
 	    printf("close_task setting in1 lo in2 hi \n");
 	    gpio_put(enA,1);
-	    sleep_ms(4000);
+	    sleep_ms(2500);
 	    printf("close_task setting in1 lo in2 hi enA hi \n");
 	    gpio_put(enA,0);
 	    printf("close_task setting in1 lo in2 hi enA lo \n");
@@ -621,11 +621,11 @@ void open_task(__unused void *params) {
 	    printf("open_task open_flg %d\n",open_flg);
 	    gpio_put(in1,1);
 	    gpio_put(in2,0);
-	    sleep_ms(10000);
+	    sleep_ms(500);
 	    printf("open_task setting in1 hi in2 lo \n");
 	    printf("open_task setting in1 hi in2 lo enA hi \n");
 	    gpio_put(enA,1);
-	    sleep_ms(1000);
+	    sleep_ms(2500);
 	    printf("open_task setting in1 hi in2 lo enA hi \n");
 	    gpio_put(enA,0);
 	    printf("open_task setting in1 hi in2 lo enA lo \n");
