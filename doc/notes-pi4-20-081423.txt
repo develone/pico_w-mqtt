@@ -1,0 +1,664 @@
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123�_��
+devel@pi4-20:~/pico_w-mqtt $ iperf -c remote5
+------------------------------------------------------------
+Client connecting to remote5, TCP port 5001
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.16.1 port 35780 connected with 192.168.16.114 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3] 0.0000-10.0351 sec  19.8 MBytes  16.5 Mbits/sec
+devel@pi4-20:~/pico_w-mqtt $ ./pico-cmd-reset 'pi4-20'
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123�μ�
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123PB��
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123 E��
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123PE��
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  4567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230�N�
+devel@pi4-20:~/pico_w-mqtt $ ./pi_tcp_tests/cli5
+Socket created successfully
+Connected with server successfully
+Starting FreeRTOS on core 0: ver 0.0.10 remote5 Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x752aa8c0 mqtt_port = 1883  456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123�=��
+
+Starting FreeRTOS on core 0:
+Connecting to Wi-Fi...
+Starting FreeRTOS on core 0:
+Connecting to Wi-Fi...
+Connected.
+MQTT client "remote5" connection cb: status 0
+MQTT client "remote5" request cb: err 0
+MQTT client "remote5" request cb: err 0
+Starting server at 192.168.16.114 on port 4001
+open_task starts
+open_task open_flg 0
+close_task starts
+close_task close_flg 0
+ntp address 45.79.214.107
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp address 64.79.100.197
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp address 162.159.200.1
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+tcp_server_recv 128/0 err 0
+RPi sent  
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.16.114 on port 4001
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+MQTT client "remote5" publish cb: topic pico/cmds, len 10
+MQTT client "remote5" data cb: len 10, flags 1
+remote255
+data[2] 1 tbits25 1 
+rem 255 cc 3 remote5
+Starting FreeRTOS on core 0:
+Connecting to Wi-Fi...
+Starting FreeRTOS on core 0:
+Connecting to Wi-Fi...
+Connected.
+MQTT client "remote5" connection cb: status 0
+MQTT client "remote5" request cb: err 0
+MQTT client "remote5" request cb: err 0
+Starting server at 192.168.16.114 on port 4001
+open_task starts
+open_task open_flg 0
+close_task starts
+close_task close_flg 0
+ntp address 204.2.134.163
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/0 err 0
+RPi sent  
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+open_task open_flg 0
+close_task close_flg 0
+Starting server at 192.168.16.114 on port 4001
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+tcp_server_recv 128/0 err 0
+RPi sent  
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.16.114 on port 4001
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/0 err 0
+RPi sent  
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.16.114 on port 4001
+open_task open_flg 0
+close_task close_flg 0
+ntp address 216.229.4.66
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/0 err 0
+RPi sent  
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.16.114 on port 4001
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+ntp request failed
+tcp_server_recv 128/0 err 0
+RPi sent  
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.16.114 on port 4001
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+Client connected
+Writing 512 bytes to client
+tcp_server_sent 512
+Waiting for buffer from client
+tcp_server_recv 128/0 err 0
+RPi sent  
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/128 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv 128/256 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+open_task open_flg 0
+close_task close_flg 0
+tcp_server_recv 128/384 err 0
+RPi sent  0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+0123456789012345678901234567890123456789012345678901234567890120123456789012345678901234567890123456789012345678901234567890123
+
+tcp_server_recv buffer ok
+test success
+Starting server at 192.168.16.114 on port 4001
+open_task open_flg 0
+close_task close_flg 0
+ntp request failed
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+open_task open_flg 0
+close_task close_flg 0
+MQTT client "remote5" publish cb: topic pico/cmds, len 10
+MQTT client "remote5" data cb: len 10, flags 1
+remote255
+data[2] 1 tbits25 1 
+rem 255 cc 6 remote5
+cc=6
+open task open_flg 0  close_flg 0
+open task open_flg 1  close_flg 0
+ntp address 104.236.116.147
+open_task open_flg 1
+close_task close_flg 0
+open_task setting in1 hi in2 lo 
+open_task setting in1 hi in2 lo enA hi 
+close_task close_flg 0
+open_task setting in1 hi in2 lo enA hi 
+open_task setting in1 hi in2 lo enA lo 
+close_task close_flg 0
+open_task open_flg 1
+open_task setting in1 hi in2 lo 
+open_task setting in1 hi in2 lo enA hi 
+close_task close_flg 0
+open_task setting in1 hi in2 lo enA hi 
+open_task setting in1 hi in2 lo enA lo 
+close_task close_flg 0
+ntp request failed
+open_task open_flg 1
+open_task setting in1 hi in2 lo 
+open_task setting in1 hi in2 lo enA hi 
+close_task close_flg 0
+close_task close_flg 0
+open_task setting in1 hi in2 lo enA hi 
+open_task setting in1 hi in2 lo enA lo 
+close_task close_flg 0
+open_task open_flg 1
+open_task setting in1 hi in2 lo 
+open_task setting in1 hi in2 lo enA hi 
+MQTT client "remote5" publish cb: topic pico/cmds, len 10
+MQTT client "remote5" data cb: len 10, flags 1
+remote255
+data[2] 1 tbits25 1 
+rem 255 cc 7 remote5
+cc=7
+open task open_flg 1  close_flg 0
+open task open_flg 0  close_flg 1
+close_task close_flg 1
+close_task setting in1 lo in2 hi 
+open_task setting in1 hi in2 lo enA hi 
+open_task setting in1 hi in2 lo enA lo 
+close_task setting in1 lo in2 hi enA hi 
+close_task setting in1 lo in2 hi enA lo 
+open_task open_flg 0
+close_task close_flg 1
+open_task open_flg 0
+close_task setting in1 lo in2 hi 
+open_task open_flg 0
+close_task setting in1 lo in2 hi enA hi 
+close_task setting in1 lo in2 hi enA lo 
+open_task open_flg 0
