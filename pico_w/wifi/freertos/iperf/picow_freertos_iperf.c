@@ -30,6 +30,7 @@ char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"}
  
 int rr[6];
 
+#define BATT_TASK_PRIORITY				( tskIDLE_PRIORITY + 11UL )
 #define CLOSE_TASK_PRIORITY				( tskIDLE_PRIORITY + 10UL )
 #define OPEN_TASK_PRIORITY				( tskIDLE_PRIORITY + 9UL )
 #define ADC_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
@@ -54,7 +55,9 @@ u8_t close_flg=0;
 char TEMPERATURE_UNITS;
 char  unit;
 float retflg;
-
+uint32_t result;
+const float conversion_factor = 3.3f / (1 << 12);
+float battery;
 typedef struct NTP_T_ {
     ip_addr_t ntp_server_address;
     bool dns_request_sent;
@@ -665,18 +668,18 @@ void ntp_task(__unused void *params) {
 void adc_task(__unused void *params) {
     //bool on = false;
     adc_init();
-    adc_set_temp_sensor_enabled(true);
-    adc_select_input(4);
+ 
     
     while (true) {
-	 
+	adc_set_temp_sensor_enabled(true);
+    	adc_select_input(4); 
 	float temperature = read_onboard_temperature(TEMPERATURE_UNITS);
      
     
         if (temperature != -50.0) {
             //printf("Onboard temperature = %.02f %c\n", temperature, TEMPERATURE_UNITS);
 
-            sprintf(PUB_PAYLOAD_SCR_T,"Onboard temperature = %.02f %c %s ", temperature, TEMPERATURE_UNITS,CYW43_HOST_NAME);
+            sprintf(PUB_PAYLOAD_SCR_T,"T = %.02f %c 0x%03x batt = %.02f %s",temperature, TEMPERATURE_UNITS,result,battery, CYW43_HOST_NAME);
             payload_t_size = sizeof(PUB_PAYLOAD_SCR_T);
              
         }
@@ -685,6 +688,26 @@ void adc_task(__unused void *params) {
     }
 
 }
+
+void batt_task(__unused void *params) {
+    //bool on = false;
+    //adc_init();
+     
+    //adc_select_input(0);
+    
+    while (true) {   
+       adc_select_input(0);
+       result = adc_read();
+       battery = result * conversion_factor; 	
+       sprintf(tmp,"batt task 0x%03x -> %f V",result, battery);
+       head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);	
+	 
+ 
+       vTaskDelay(20000);
+    }
+
+}
+
 void watchdog_task(__unused void *params) {
     //bool on = false;
 
@@ -882,7 +905,7 @@ void init_pico_mqtt(void) {
     /*setting default temperature units*/
     xTaskCreate(open_task, "OPENThread", configMINIMAL_STACK_SIZE, NULL, OPEN_TASK_PRIORITY, NULL);
     xTaskCreate(close_task, "CLOSEThread", configMINIMAL_STACK_SIZE, NULL, CLOSE_TASK_PRIORITY, NULL);
-
+    xTaskCreate(batt_task, "BATTThread", configMINIMAL_STACK_SIZE, NULL, BATT_TASK_PRIORITY, NULL);
 
 
 
