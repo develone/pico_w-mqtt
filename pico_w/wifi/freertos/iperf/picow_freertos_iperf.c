@@ -123,8 +123,12 @@ u8_t cmd;
 char houralarm[3];
 char minalarm[3];
 char secalarm[3];
-
-
+char tmp[80];
+char * ptrhead;
+char * ptrtail;
+char * ptrendofbuf;
+char * ptrtopofbuf;
+char client_message[BUF_SIZE]; 
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
 
 u16_t mqtt_port = 1883;
@@ -162,7 +166,8 @@ static void alarm_callback(void) {
     datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
     printf("Alarm Fired At %s\n", datetime_str);
     sprintf(tmp,"Alarm Fired %s ",datetime_str);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
+    //printf("client_message %s\n",client_message);
     stdio_flush();
     fired = true;
     alarm_flg=1;
@@ -324,7 +329,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -338,7 +343,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -352,7 +357,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -366,7 +371,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -402,7 +407,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     
                     
                     gpio_set_mask(mask);
@@ -700,7 +705,7 @@ void batt_task(__unused void *params) {
        result = adc_read();
        battery = result * conversion_factor; 	
        sprintf(tmp,"batt task 0x%03x -> %f V",result, battery);
-       head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);	
+       ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);	
 	 
  
        vTaskDelay(20000);
@@ -863,14 +868,15 @@ void init_pico_mqtt(void) {
     printf("Connected.\n");
     //printf("%d %d %d %d\n",bit2,bit3,bit4,bit5);
     sprintf(tmp,"Connected. iperf server %s %u  ",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
     //sprintf(tmp,"starting watchdog timer task ")
     //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     //printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
     //printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
     sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d  ",mqtt_ip,mqtt_port);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
     //topofbuf = (char *)&client_message[256];
+    //printf("client_message %s\n",client_message);
     for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 4; gpio++) {
         gpio_init(gpio);
         gpio_set_dir(gpio, GPIO_OUT);
@@ -1007,7 +1013,7 @@ static void ntp_result(NTP_T* state, int status, time_t *result) {
                utc->tm_hour, utc->tm_min, utc->tm_sec);
                sprintf(tmp," %02d/%02d/%04d %02d:%02d:%02d ", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
                utc->tm_hour, utc->tm_min, utc->tm_sec);
-               head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+               ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                //topofbuf = (char *)&client_message[256];
                
     }
@@ -1146,11 +1152,11 @@ int main( void )
 {
     stdio_init_all();
 	preptopidata();
-	head = (char *)&client_message[0];
-	tail = (char *)&client_message[0];
-	topofbuf = (char *)&client_message[0];
-	endofbuf = (char *)&client_message[BUF_SIZE-1];
-	// printf("0x%x 0x%x 0x%x 0x%x \n", head, tail, endofbuf, topofbuf);
+	ptrhead = (char *)&client_message[0];
+	ptrtail = (char *)&client_message[0];
+	ptrtopofbuf = (char *)&client_message[0];
+	ptrendofbuf = (char *)&client_message[BUF_SIZE-1];
+	printf("0x%x 0x%x 0x%x 0x%x \n", ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf);
 	
 
     /* Configure the hardware ready to run the demo. */
@@ -1171,7 +1177,7 @@ int main( void )
 #else
 	printf("Starting %s on core 0:\n", rtos_name);
 	sprintf(tmp,"Starting %s on core 0: ver %s %s ", rtos_name,ver,CYW43_HOST_NAME);
-	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+	ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
     vLaunch();
 #endif
     return 0;
