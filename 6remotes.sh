@@ -10,7 +10,7 @@ cd remote1
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote1" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote1" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"  ..
 
 
 make
@@ -23,7 +23,7 @@ cd remote2
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote2" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote2" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
 
 make
 
@@ -35,7 +35,7 @@ cd remote3
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote3" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote3" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
 
 make
 
@@ -47,7 +47,7 @@ cd remote4
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote4" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote4" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
 
 make
 
@@ -59,7 +59,7 @@ cd remote5
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote5" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote5" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
 
 make
 
@@ -71,9 +71,9 @@ cd remote6
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote6" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD" -DFREERTOS_KERNEL_PATH:PATH=/home/devel/FreeRTOS-Kernel ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote6" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"  ..
 
-make
+make 
 
 cd ../
 
