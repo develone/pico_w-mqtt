@@ -23,9 +23,6 @@
 #include "hardware/adc.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#ifndef RUN_FREERTOS_ON_CORE
-	#define RUN_FREERTOS_ON_CORE 0
-#endif
 char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"};
  
 int rr[6];
@@ -169,7 +166,9 @@ static void alarm_callback(void) {
 	#if LWIP_IPV4 /*LWIP_IPV4*/
 
 			/*192.168.1.212 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-50*/
-			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801d4))
+			//#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801d4))
+			/*192.168.1.230 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-30*/
+			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801e6))
 
 	#else
 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT
@@ -1044,7 +1043,7 @@ int main( void )
     rtos_name = "FreeRTOS";
 #endif
 
-#if ( portSUPPORT_SMP == 1 ) && ( configNUM_CORES == 2 )
+#if ( configNUMBER_OF_CORES == 2 )
     printf("Starting %s on both cores:\n", rtos_name);
     vLaunch();
 #elif ( RUN_FREERTOS_ON_CORE == 1 )
@@ -1052,7 +1051,7 @@ int main( void )
     multicore_launch_core1(vLaunch);
     while (true);
 #else
-	printf("Starting %s on core 0:\n", rtos_name);
+    printf("Starting %s on core 0:\n", rtos_name);
 	sprintf(tmp,"Starting %s on core 0: ver %s %s ", rtos_name,ver,CYW43_HOST_NAME);
 	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     vLaunch();
