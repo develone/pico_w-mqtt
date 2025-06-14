@@ -10,7 +10,7 @@ cd remote7
 
 cp ../exe-ocd.sh .
 
-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote7" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
+cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote7" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"  ..
 
 
 make

@@ -17,6 +17,7 @@ target_compile_definitions(picow_freertos_iperf_server_mqtt PRIVATE
         )
 target_include_directories(picow_freertos_iperf_server_mqtt PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/.. # for our common FreeRTOSConfig
         ${CMAKE_CURRENT_LIST_DIR}/../.. # for our common lwipopts
         )
 target_link_libraries(picow_freertos_iperf_server_mqtt
