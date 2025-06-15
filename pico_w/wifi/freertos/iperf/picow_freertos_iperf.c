@@ -23,10 +23,16 @@
 #include "hardware/adc.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#ifndef RUN_FREERTOS_ON_CORE
+	#define RUN_FREERTOS_ON_CORE 0
+#endif
 char remotes[6][8]={"remote1","remote2","remote3","remote4","remote5","remote6"};
  
 int rr[6];
 
+#define BATT_TASK_PRIORITY				( tskIDLE_PRIORITY + 11UL )
+#define CLOSE_TASK_PRIORITY				( tskIDLE_PRIORITY + 10UL )
+#define OPEN_TASK_PRIORITY				( tskIDLE_PRIORITY + 9UL )
 #define ADC_TASK_PRIORITY				( tskIDLE_PRIORITY + 8UL )
 #define NTP_TASK_PRIORITY				( tskIDLE_PRIORITY + 5UL )
 #define WATCHDOG_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
@@ -41,13 +47,17 @@ int rr[6];
 //char rectime[19];
 static volatile bool fired = false;
 u8_t alarm_flg=0;
+u8_t open_flg=0;
+u8_t close_flg=0;
 
 /* Choose 'C' for Celsius or 'F' for Fahrenheit. */
 //#define TEMPERATURE_UNITS 'F'
 char TEMPERATURE_UNITS;
 char  unit;
 float retflg;
-
+uint32_t result;
+const float conversion_factor = 3.3f / (1 << 12);
+float battery;
 typedef struct NTP_T_ {
     ip_addr_t ntp_server_address;
     bool dns_request_sent;
@@ -62,7 +72,9 @@ typedef struct NTP_T_ {
 #define NTP_DELTA 2208988800 // seconds between 1 Jan 1900 and 1 Jan 1970
 #define NTP_TEST_TIME (30 * 1000)
 #define NTP_RESEND_TIME (10 * 1000)
-
+#define in1 14
+#define in2 15
+#define enA 16
 /*needed for rtc */
 datetime_t t;
 datetime_t alarm;
@@ -111,8 +123,12 @@ u8_t cmd;
 char houralarm[3];
 char minalarm[3];
 char secalarm[3];
-
-
+char tmp[80];
+char * ptrhead;
+char * ptrtail;
+char * ptrendofbuf;
+char * ptrtopofbuf;
+char client_message[BUF_SIZE]; 
 mqtt_request_cb_t pub_mqtt_request_cb_t; 
 
 u16_t mqtt_port = 1883;
@@ -150,7 +166,8 @@ static void alarm_callback(void) {
     datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
     printf("Alarm Fired At %s\n", datetime_str);
     sprintf(tmp,"Alarm Fired %s ",datetime_str);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
+    //printf("client_message %s\n",client_message);
     stdio_flush();
     fired = true;
     alarm_flg=1;
@@ -167,8 +184,8 @@ static void alarm_callback(void) {
 
 			/*192.168.1.212 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-50*/
 			//#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801d4))
-			/*192.168.1.230 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-30*/
-			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801e6))
+			/*192.168.1.93 0xc0a8015d LWIP_MQTT_EXAMPLE_IPADDR_INIT pi5-70*/
+			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a8015d))
 
 	#else
 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT
@@ -314,7 +331,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -328,7 +345,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -342,7 +359,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -356,7 +373,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     printf("mask %d\n",mask);
                     gpio_set_mask(mask);
                 }
@@ -392,7 +409,7 @@ void process_cmd(u8_t rem, u8_t cc) {
                     mask = bits[val] << FIRST_GPIO;
 					printf("loop %d rem %d val %d mask %d bits 0x%x \n",loop,rem,val,mask,bits[val]);
                     sprintf(tmp,"val %d ",val);
-                    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+                    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                     
                     
                     gpio_set_mask(mask);
@@ -451,6 +468,23 @@ void process_cmd(u8_t rem, u8_t cc) {
         unit = 'F';
         TEMPERATURE_UNITS='F';
     }
+
+    if(cc==6) {
+        printf("cc=%d\n",cc);
+	printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
+	open_flg=1;
+	close_flg=0;
+	printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
+        
+    }
+    if(cc==7) {
+        printf("cc=%d\n",cc);
+        printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
+	close_flg=1;
+	open_flg=0;
+	printf("open task open_flg %d  close_flg %d\n",open_flg,close_flg);
+    }
+
 }
 
 static void
@@ -559,6 +593,64 @@ static void iperf_report(void *arg, enum lwiperf_report_type report_type,
 #endif
 }
 
+/*needed for close*/
+void close_task(__unused void *params) {
+    //bool on = false;
+    printf("close_task starts\n");
+
+	 
+    while (true) {
+        if(close_flg==1) {
+	    printf("close_task close_flg %d\n",close_flg);
+	    gpio_put(in1,0);
+	    gpio_put(in2,1);
+	    sleep_ms(500);
+	    printf("close_task setting in1 lo in2 hi \n");
+	    gpio_put(enA,1);
+	    sleep_ms(2500);
+	    printf("close_task setting in1 lo in2 hi enA hi \n");
+	    gpio_put(enA,0);
+	    printf("close_task setting in1 lo in2 hi enA lo \n");
+	}
+	else 
+	{
+	    printf("close_task close_flg %d\n",close_flg);
+	}	
+        vTaskDelay(2200);
+    }
+}
+/*needed for open/
+
+/*needed for open */
+void open_task(__unused void *params) {
+    //bool on = false;
+    printf("open_task starts\n");
+	 
+    while (true) {
+	if(open_flg==1) {
+	    printf("open_task open_flg %d\n",open_flg);
+	    gpio_put(in1,1);
+	    gpio_put(in2,0);
+	    sleep_ms(500);
+	    printf("open_task setting in1 hi in2 lo \n");
+	    printf("open_task setting in1 hi in2 lo enA hi \n");
+	    gpio_put(enA,1);
+	    sleep_ms(2500);
+	    printf("open_task setting in1 hi in2 lo enA hi \n");
+	    gpio_put(enA,0);
+	    printf("open_task setting in1 hi in2 lo enA lo \n");
+	}
+	
+	else 
+	{
+	    printf("open_task open_flg %d\n",open_flg);
+	}
+       
+        vTaskDelay(2200);
+    }
+}
+/*needed for close/
+
 /*needed for ntp*/
 void ntp_task(__unused void *params) {
     //bool on = false;
@@ -575,7 +667,7 @@ void ntp_task(__unused void *params) {
         //cyw43_arch_gpio_put(0, on);
         //on = !on;
         
-        vTaskDelay(200);
+        vTaskDelay(2200);
     }
 }
 /*needed for ntp*/
@@ -583,26 +675,46 @@ void ntp_task(__unused void *params) {
 void adc_task(__unused void *params) {
     //bool on = false;
     adc_init();
-    adc_set_temp_sensor_enabled(true);
-    adc_select_input(4);
+ 
     
     while (true) {
-	 
+	adc_set_temp_sensor_enabled(true);
+    	adc_select_input(4); 
 	float temperature = read_onboard_temperature(TEMPERATURE_UNITS);
      
     
         if (temperature != -50.0) {
             //printf("Onboard temperature = %.02f %c\n", temperature, TEMPERATURE_UNITS);
 
-            sprintf(PUB_PAYLOAD_SCR_T,"Onboard temperature = %.02f %c %s ", temperature, TEMPERATURE_UNITS,CYW43_HOST_NAME);
+            sprintf(PUB_PAYLOAD_SCR_T,"T = %.02f %c 0x%03x batt = %.02f %s",temperature, TEMPERATURE_UNITS,result,battery, CYW43_HOST_NAME);
             payload_t_size = sizeof(PUB_PAYLOAD_SCR_T);
              
         }
  
-       vTaskDelay(20000);
+       vTaskDelay(22000);
     }
 
 }
+
+void batt_task(__unused void *params) {
+    //bool on = false;
+    //adc_init();
+     
+    //adc_select_input(0);
+    
+    while (true) {   
+       adc_select_input(0);
+       result = adc_read();
+       battery = result * conversion_factor; 	
+       sprintf(tmp,"batt task 0x%03x -> %f V",result, battery);
+       ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);	
+	 
+ 
+       vTaskDelay(22000);
+    }
+
+}
+
 void watchdog_task(__unused void *params) {
     //bool on = false;
 
@@ -612,7 +724,7 @@ void watchdog_task(__unused void *params) {
 	watchdog_update();
     
  
-       vTaskDelay(200);
+       vTaskDelay(100);
     }
 }
  
@@ -666,7 +778,7 @@ cyw43_arch_lwip_end();
   cyw43_arch_lwip_begin();	
   mqtt_publish(mqtt_client,"pico/status",PUB_PAYLOAD_SCR_T,payload_t_size,2,0,pub_mqtt_request_cb_t,PUB_EXTRA_ARG_T);
    cyw43_arch_lwip_end();	
-        vTaskDelay(1000);
+        vTaskDelay(10000);
     }
 }
 
@@ -697,7 +809,7 @@ void socket_task(__unused void *params) {
          	}
 		}
 
-        vTaskDelay(200);
+        vTaskDelay(2200);
 		
     }
 }
@@ -716,7 +828,7 @@ void blink_task(__unused void *params) {
         cyw43_arch_gpio_put(0, on);
         on = !on;
 
-        vTaskDelay(200);
+        vTaskDelay(2200);
     }
 }
 
@@ -728,7 +840,7 @@ void main_task(__unused void *params) {
 	watchdog_enable(10000, 1);
 	//while (wifi_connected) {
     	cyw43_arch_enable_sta_mode();
-    	//printf("Connecting to Wi-Fi...\n");
+    	printf("Connecting to Wi-Fi...\n");
 		//sprintf(tmp,"Connecting to Wi-Fi...");
 		//head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000)) {
@@ -758,19 +870,27 @@ void init_pico_mqtt(void) {
     printf("Connected.\n");
     //printf("%d %d %d %d\n",bit2,bit3,bit4,bit5);
     sprintf(tmp,"Connected. iperf server %s %u  ",ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
     //sprintf(tmp,"starting watchdog timer task ")
     //head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
     //printf("mqtt_ip = 0x%x &mqtt_ip = 0x%x\n",mqtt_ip,&mqtt_ip);
     //printf("mqtt_port = %d &mqtt_port 0x%x\n",mqtt_port,&mqtt_port);
     sprintf(tmp,"mqtt_ip = 0x%x mqtt_port = %d  ",mqtt_ip,mqtt_port);
-    head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+    ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
     //topofbuf = (char *)&client_message[256];
+    //printf("client_message %s\n",client_message);
     for (int gpio = FIRST_GPIO; gpio < FIRST_GPIO + 4; gpio++) {
         gpio_init(gpio);
         gpio_set_dir(gpio, GPIO_OUT);
         gpio_set_outover(gpio, GPIO_OVERRIDE_INVERT);
     }
+    /*initialize valve gpio*/
+    gpio_init(in1);
+    gpio_set_dir(in1, GPIO_OUT);
+    gpio_init(in2);
+    gpio_set_dir(in2, GPIO_OUT);
+    gpio_init(enA);
+    gpio_set_dir(enA, GPIO_OUT);
      
     rr[0] = strcmp(remotes[0],CYW43_HOST_NAME);
     rr[1]= strcmp(remotes[1],CYW43_HOST_NAME);
@@ -791,6 +911,12 @@ void init_pico_mqtt(void) {
     //xTaskCreate(gpio_task, "GPIOThread", configMINIMAL_STACK_SIZE, NULL, GPIO_TASK_PRIORITY, NULL);
     xTaskCreate(adc_task, "ADCThread", configMINIMAL_STACK_SIZE, NULL, ADC_TASK_PRIORITY, NULL);
     /*setting default temperature units*/
+    xTaskCreate(open_task, "OPENThread", configMINIMAL_STACK_SIZE, NULL, OPEN_TASK_PRIORITY, NULL);
+    xTaskCreate(close_task, "CLOSEThread", configMINIMAL_STACK_SIZE, NULL, CLOSE_TASK_PRIORITY, NULL);
+    xTaskCreate(batt_task, "BATTThread", configMINIMAL_STACK_SIZE, NULL, BATT_TASK_PRIORITY, NULL);
+
+
+
     TEMPERATURE_UNITS = 'C';
     unit = 'C';
     retflg=read_onboard_temperature(unit);
@@ -889,7 +1015,7 @@ static void ntp_result(NTP_T* state, int status, time_t *result) {
                utc->tm_hour, utc->tm_min, utc->tm_sec);
                sprintf(tmp," %02d/%02d/%04d %02d:%02d:%02d ", utc->tm_mday, utc->tm_mon + 1, utc->tm_year + 1900,
                utc->tm_hour, utc->tm_min, utc->tm_sec);
-               head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+               ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
                //topofbuf = (char *)&client_message[256];
                
     }
@@ -1028,11 +1154,11 @@ int main( void )
 {
     stdio_init_all();
 	preptopidata();
-	head = (char *)&client_message[0];
-	tail = (char *)&client_message[0];
-	topofbuf = (char *)&client_message[0];
-	endofbuf = (char *)&client_message[BUF_SIZE-1];
-	// printf("0x%x 0x%x 0x%x 0x%x \n", head, tail, endofbuf, topofbuf);
+	ptrhead = (char *)&client_message[0];
+	ptrtail = (char *)&client_message[0];
+	ptrtopofbuf = (char *)&client_message[0];
+	ptrendofbuf = (char *)&client_message[BUF_SIZE-1];
+	printf("0x%x 0x%x 0x%x 0x%x \n", ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf);
 	
 
     /* Configure the hardware ready to run the demo. */
@@ -1043,7 +1169,7 @@ int main( void )
     rtos_name = "FreeRTOS";
 #endif
 
-#if ( configNUMBER_OF_CORES == 2 )
+#if ( portSUPPORT_SMP == 1 ) && ( configNUM_CORES == 2 )
     printf("Starting %s on both cores:\n", rtos_name);
     vLaunch();
 #elif ( RUN_FREERTOS_ON_CORE == 1 )
@@ -1051,9 +1177,9 @@ int main( void )
     multicore_launch_core1(vLaunch);
     while (true);
 #else
-    printf("Starting %s on core 0:\n", rtos_name);
+	printf("Starting %s on core 0:\n", rtos_name);
 	sprintf(tmp,"Starting %s on core 0: ver %s %s ", rtos_name,ver,CYW43_HOST_NAME);
-	head = head_tail_helper(head, tail, endofbuf, topofbuf, tmp);
+	ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
     vLaunch();
 #endif
     return 0;
