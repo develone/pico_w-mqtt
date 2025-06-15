@@ -1,85 +1,88 @@
 #include "head_tail.h"
-char * head_tail_helper(char * head, char * tail, char * endofbuf,char * topofbuf, char * inpstr) {
+ 
+ 
+  
+char * head_tail_helper(char * ptrhead, char * ptrtail,char * ptrendofbuf,char * ptrtopofbuf, char * inpstr) {
 	
-	u8_t loop = 0;
-	u8_t tstlen = 0;
-	//printf("0x%x 0x%x 0x%x 0x%x \n", head, tail, endofbuf, topofbuf);
-	//printf("%s\n", inpstr);
+	int loop = 0;
+    int tstlen = 0;
+	printf("0x%x 0x%x 0x%x 0x%x \n", ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf);
+	printf("%s\n", inpstr);
 	tstlen = strlen(inpstr);
 	// printf("%d %d \n", loop,tstlen);
 	
 	for(loop=0;loop< tstlen; loop++) {
-		*head = inpstr[loop];
+		*ptrhead = inpstr[loop];
 		// printf("head 0x%x head 0x%x E 0x%x  T 0x%x \n", *head,head, endofbuf, topofbuf);
 		
-		head = bump_head(head, endofbuf, topofbuf);
+		ptrhead = bump_head(ptrhead, ptrendofbuf, ptrtopofbuf);
 		// printf("head 0x%x head 0x%x E 0x%x  T 0x%x \n", *head,head, endofbuf, topofbuf);
 		
 	}
 	// printf("head 0x%x head 0x%x E 0x%x  T 0x%x \n", *head,head, endofbuf, topofbuf);
 	
-	return ((char *)head);
+	return ((char *)ptrhead);
 }
  
-char * bump_head(char * head, char * endofbuf,char * topofbuf) {
+char * bump_head(char * ptrhead, char * ptrendofbuf,char * ptrtopofbuf) {
  
-	if(head == endofbuf) {
+	if(ptrhead == ptrendofbuf) {
 
 		
 			// printf("head == endofbuf\n");
 			
-			head = topofbuf;
+			ptrhead = ptrtopofbuf;
 	}
 	else {
 		// printf("head < endofbuf\n");
 		
-		head = head + 1;
+		ptrhead = ptrhead + 1;
 	}
  
 	
-	return((char *)head);
+	return((char *)ptrhead);
 }
-char * bump_tail(char * tail,char * endofbuf,char * topofbuf) {
+char * bump_tail(char * ptrtail,char * ptrendofbuf,char * ptrtopofbuf) {
 	
-	if(tail == endofbuf) {
+	if(ptrtail == ptrendofbuf) {
 
 		
 			// printf("tail == endofbuf\n");
 			
-			tail = topofbuf;
+			ptrtail = ptrtopofbuf;
 	}
 	else {
 		// printf("tail < endofbuf\n");
 		
-		tail = tail + 1;
+		ptrtail = ptrtail + 1;
 	}
  
 	
-	return((char *)tail);
+	return((char *)ptrtail);
 }
-char * dec_head(char * head,char * endofbuf,char * topofbuf) {
-	if(head == topofbuf) {
+char * dec_head(char * ptrhead,char * ptrendofbuf,char * ptrtopofbuf) {
+	if(ptrhead == ptrtopofbuf) {
 			// printf("head == topofbuf\n");
 			
 			//head = topofbuf;
 	}
 	else {
 		//printf("head < topofbuf\n");
-		head = head - 1;
+		ptrhead = ptrhead - 1;
 	}
 
-	return((char *)head);
+	return((char *)ptrhead);
 }
-char * dec_tail(char * tail,char * endofbuf,char * topofbuf) {
-	if(tail == topofbuf) {
-			printf("tail == topofbuf\n");
-			head = topofbuf;
+char * dec_tail(char * ptrtail,char * ptrendofbuf,char * ptrtopofbuf) {
+	if(ptrtail == ptrtopofbuf) {
+			//printf("tail == topofbuf\n");
+			ptrtail = ptrtopofbuf;
 	}
 	else {
-		printf("tail < topofbuf\n");
-		tail = tail - 1;
+		//printf("tail < topofbuf\n");
+		ptrtail = ptrtail - 1;
 	}
 
-	return((char *)tail); 
+	return((char *)ptrtail); 
 }
 

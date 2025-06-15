@@ -11,7 +11,7 @@
 #define BUF_SIZE 512
 #define TEST_ITERATIONS 1
 #define POLL_TIME_S 5
-char client_message[BUF_SIZE];
+extern char client_message[BUF_SIZE];
 
 typedef struct TCP_SERVER_T_ {
     struct tcp_pcb *server_pcb;
