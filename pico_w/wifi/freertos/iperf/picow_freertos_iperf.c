@@ -1163,13 +1163,13 @@ int main( void )
 
     /* Configure the hardware ready to run the demo. */
     const char *rtos_name;
-#if ( portSUPPORT_SMP == 1 )
+#if ( configNUMBER_OF_CORES > 1 )
     rtos_name = "FreeRTOS SMP";
 #else
     rtos_name = "FreeRTOS";
 #endif
 
-#if ( portSUPPORT_SMP == 1 ) && ( configNUM_CORES == 2 )
+#if ( configNUMBER_OF_CORES == 2 )
     printf("Starting %s on both cores:\n", rtos_name);
     vLaunch();
 #elif ( RUN_FREERTOS_ON_CORE == 1 )
@@ -1177,9 +1177,7 @@ int main( void )
     multicore_launch_core1(vLaunch);
     while (true);
 #else
-	printf("Starting %s on core 0:\n", rtos_name);
-	sprintf(tmp,"Starting %s on core 0: ver %s %s ", rtos_name,ver,CYW43_HOST_NAME);
-	ptrhead = head_tail_helper(ptrhead, ptrtail, ptrendofbuf, ptrtopofbuf, tmp);
+    printf("Starting %s on core 0:\n", rtos_name);
     vLaunch();
 #endif
     return 0;
