@@ -1,0 +1,61 @@
+06/19/25
+pico_w remote1,remote2, and remote3
+pico2_w remote5
+devel@pi5-70:~ $ ./scripts-rpi/mosquitto/mos-q.sh
+T = 32.29 C 0x047 batt = 0.06 remote3 
+T = 32.29 C 0x042 batt = 0.05 remote2 
+T = 30.42 C 0x04d batt = 0.06 remote1 
+T = 32.29 C 0x047 batt = 0.06 remote3 
+T = 32.29 C 0x042 batt = 0.05 remote2 
+T = 30.42 C 0x04d batt = 0.06 remote1 
+T = 31.82 C 0x048 batt = 0.06 remote3 
+T = 32.29 C 0x042 batt = 0.05 remote2 
+T = 30.42 C 0x04f batt = 0.06 remote1 
+T = 31.82 C 0x048 batt = 0.06 remote3 
+
+devel@pi5-70:~/pico_w-mqtt/pi_tcp_tests $ iperf -c remote1
+------------------------------------------------------------
+Client connecting to remote1, TCP port 5001
+TCP window size: 16.0 KByte (default)
+------------------------------------------------------------
+[  1] local 192.168.1.93 port 37158 connected with 192.168.1.178 port 5001 (icwnd/mss/irtt=14/1460/296976)
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-10.0885 sec  18.4 MBytes  15.3 Mbits/sec
+devel@pi5-70:~/pico_w-mqtt/pi_tcp_tests $ iperf -c remote2
+------------------------------------------------------------
+Client connecting to remote2, TCP port 5001
+TCP window size: 16.0 KByte (default)
+------------------------------------------------------------
+[  1] local 192.168.1.93 port 44892 connected with 192.168.1.177 port 5001 (icwnd/mss/irtt=14/1460/2499)
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-10.0639 sec  17.8 MBytes  14.8 Mbits/sec
+devel@pi5-70:~/pico_w-mqtt/pi_tcp_tests $ iperf -c remote3
+------------------------------------------------------------
+Client connecting to remote3, TCP port 5001
+TCP window size: 16.0 KByte (default)
+------------------------------------------------------------
+[  1] local 192.168.1.93 port 45992 connected with 192.168.1.176 port 5001 (icwnd/mss/irtt=14/1460/228026)
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-10.0917 sec  15.9 MBytes  13.2 Mbits/sec
+devel@pi5-70:~/pico_w-mqtt/pi_tcp_tests $ iperf -c remote5
+------------------------------------------------------------
+Client connecting to remote5, TCP port 5001
+TCP window size: 16.0 KByte (default)
+------------------------------------------------------------
+[  1] local 192.168.1.93 port 56272 connected with 192.168.1.129 port 5001 (icwnd/mss/irtt=14/1460/122026)
+[ ID] Interval       Transfer     Bandwidth
+[  1] 0.0000-10.0912 sec  20.8 MBytes  17.2 Mbits/sec
+
+B
+B
+B
+B
+B
+B
+B
+B
+B
+B
+B
+B
+
