@@ -1,0 +1,52 @@
+setting the mqtt ip to pi4-3
+setting the WIFI_SSID to "Century Link3"
+diff --git a/3remotes.sh b/3remotes.sh
+index 56ed965..dc95c92 100755
+--- a/3remotes.sh
++++ b/3remotes.sh
+@@ -10,7 +10,7 @@ cd remote7
+ 
+ cp ../exe-ocd.sh .
+ 
+-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote7" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"  ..
++cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote7" -DWIFI_SSID="Century Link3" -DWIFI_PASSWORD="abdcda5860"  ..
+ 
+ 
+ make
+@@ -23,7 +23,7 @@ cd remote8
+ 
+ cp ../exe-ocd.sh .
+ 
+-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote8" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
++cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote8" -DWIFI_SSID="Century Link3" -DWIFI_PASSWORD="abdcda5860"   ..
+ 
+ make
+ 
+@@ -35,7 +35,7 @@ cd remote9
+ 
+ cp ../exe-ocd.sh .
+ 
+-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote9" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"   ..
++cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote9" -DWIFI_SSID="Century Link3" -DWIFI_PASSWORD="abdcda5860"   ..
+ 
+ make
+ 
+diff --git a/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c b/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c
+index f7ec6da..ff19253 100644
+--- a/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c
++++ b/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c
+@@ -182,10 +182,10 @@ static void alarm_callback(void) {
+ 	#ifndef LWIP_MQTT_EXAMPLE_IPADDR_INIT
+ 	#if LWIP_IPV4 /*LWIP_IPV4*/
+ 
+-			/*192.168.1.212 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-50*/
+-			//#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801d4))
+-			/*192.168.1.253 0xc0a801fd LWIP_MQTT_EXAMPLE_IPADDR_INIT pi5-90*/
+-			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801fd))
++			/*192.168.42.119 0xc0a82a77 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-3*/
++			//#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a82a77))
++			/*192.168.42.119 0xc0a82a77 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-3*/
++			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a82a77))
+ 
+ 	#else
+ 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT

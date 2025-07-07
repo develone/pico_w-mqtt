@@ -1,0 +1,93 @@
+setting the mqtt ip to pi4-20
+setting the WIFI_SSID to "Century Link4"
+pi4-20 inet 192.168.42.116 
+remote5 192.16.114
+diff --git a/1remote.sh b/1remote.sh
+index b1728c9..3fee812 100755
+--- a/1remote.sh
++++ b/1remote.sh
+@@ -10,7 +10,7 @@ cd remote5
+ 
+ cp ../exe-ocd.sh .
+ 
+-cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote5" -DWIFI_SSID="WIFI_SSID" -DWIFI_PASSWORD="WIFI_PASSWORD"  ..
++cmake -DPICO_BOARD=pico_w  -DHOSTNAME="remote5" -DWIFI_SSID="Century Link4" -DWIFI_PASSWORD="abdcda5860"  ..
+ 
+ 
+ make
+diff --git a/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c b/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c
+index f7ec6da..f93284e 100644
+--- a/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c
++++ b/pico_w/wifi/freertos/iperf/picow_freertos_iperf.c
+@@ -184,8 +184,8 @@ static void alarm_callback(void) {
+ 
+ 			/*192.168.1.212 0xc0a801d4 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-50*/
+ 			//#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801d4))
+-			/*192.168.1.253 0xc0a801fd LWIP_MQTT_EXAMPLE_IPADDR_INIT pi5-90*/
+-			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a801fd))
++			/*192.168.42.116 0xc0a82a74 LWIP_MQTT_EXAMPLE_IPADDR_INIT pi4-20*/
++			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT = IPADDR4_INIT(PP_HTONL(0xc0a82a74))
+ 
+ 	#else
+ 			#define LWIP_MQTT_EXAMPLE_IPADDR_INIT
+
+devel@pi4-20:~ $ ./scripts-rpi/mosquitto/mos.sh 
+1751902121: mosquitto version 2.0.11 starting
+1751902121: Config loaded from /etc/mosquitto/mosquitto.conf.
+1751902121: Opening ipv4 listen socket on port 1883.
+1751902121: Opening ipv6 listen socket on port 1883.
+1751902121: mosquitto version 2.0.11 running
+devel@pi4-20:~ $ 1751902124: New connection from 192.168.16.114:49536 on port 1883.
+
+devel@pi4-20:~/pico_w-mqtt/pi_tcp_tests $ ./cli5
+Socket created successfully
+Connected with server successfully
+Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x742aa8c0 mqtt_port = 1883  batt task 0x051 -> 0.065259 V9012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123`��
+
+#!/bin/bash
+openocd -f interface/raspberrypi-swd.cfg -f target/rp2040.cfg -c "program pico_w/wifi/freertos/iperf/picow_freertos_iperf_server_mqtt.elf verify reset exit"
+
+devel@pi4-20:~/pico_w-mqtt/remote5 $ ./exe-ocd.sh
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000184 msp: 0x20041f00
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000184 msp: 0x20041f00
+** Programming Finished **
+** Verify Started **
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000184 msp: 0x20041f00
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00000184 msp: 0x20041f00
+** Verified OK **
+** Resetting Target **
+shutdown command invoked
+
+
+devel@pi4-20:~/pico_w-mqtt $ ./pico-cmd-F '192.168.42.116'
+devel@pi4-20:~/pico_w-mqtt $ ./pico-cmd-C '192.168.42.116'
+
+devel@pi4-20:~ $ ./scripts-rpi/mosquitto/mos-q.sh 
+T = 36.03 C 0x052 batt = 0.07 remote5 
+T = 36.03 C 0x052 batt = 0.07 remote5 
+T = 35.56 C 0x052 batt = 0.07 remote5 
+T = 35.56 C 0x052 batt = 0.07 remote5 
+T = 35.56 C 0x051 batt = 0.07 remote5 
+T = 35.56 C 0x051 batt = 0.07 remote5 
+T = 96.02 F 0x051 batt = 0.07 remote5 
+T = 96.02 F 0x051 batt = 0.07 remote5 
+T = 96.02 F 0x051 batt = 0.07 remote5 
+T = 96.02 F 0x050 batt = 0.06 remote5 
+T = 96.02 F 0x050 batt = 0.06 remote5 
+T = 35.56 C 0x050 batt = 0.06 remote5
+
+devel@pi4-20:~/pico_w-mqtt $ ./pico-cmd-reset '192.168.42.116'
+
+devel@pi4-20:~/pico_w-mqtt/pi_tcp_tests $ ./cli5
+Socket created successfully
+Connected with server successfully
+Connected. iperf server 192.168.16.114 4001  mqtt_ip = 0x742aa8c0 mqtt_port = 1883  batt task 0x050 -> 0.064453 V9012345678901230123456789012345678901234567890123456789012345678901234567890123012345678901234567890123456789012345678901234567890123456789012301234567890123456789012345678901234567890123456789012345678901230123456789012345678901234567890123456789012345678901234567890123
+
+devel@pi4-20:~/pico_w-mqtt/pi_tcp_tests $ ./cli5
+Socket created successfully
+Connected with server successfully
+0x051 -> 0.065259 Vbatt task 0x051 -> 0.065259 Vbatt task 0x050 -> 0.064453 Vbatt task 0x052 -> 0.066064 Vbatt task 0x050 -> 0.064453 Vbatt task 0x051 -> 0.065259 Vbatt task 0x052 -> 0.066064 Vbatt task 0x051 -> 0.065259 Vbatt task 0x052 -> 0.066064 V0x050 -> 0.064453 Vbatt task 0x051 -> 0.065259 Vbatt task 0x052 -> 0.066064 Vbatt task 0x051 -> 0.065259 Vbatt task 0x051 -> 0.065259Ў��
