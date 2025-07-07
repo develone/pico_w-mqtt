@@ -1,0 +1,20 @@
+This is multi-brokers pi4-3, pi4-37, pi4-20, and pi5-90
+with pico_w & pico2_w
+^Cdevel@pi5-90:~ $ mosquitto_sub -t 'pico/status' -u 'testuser' -P 'password123' -h '192.168.42.105'
+T = 46.33 C 0x03c batt = 0.05 remote5 
+^Cdevel@pi5-90:~ $ mosquitto_sub -t 'pico/status' -u 'testuser' -P 'password123' -h '192.168.42.116'
+T = 41.65 C 0x052 batt = 0.07 remote5 
+T = 41.65 C 0x052 batt = 0.07 remote5 
+^Cdevel@pi5-90:~ $ mosquitto_sub -t 'pico/status' -u 'testuser' -P 'password123' -h '192.168.42.119'
+T = 47.74 C 0x04a batt = 0.06 remote7 
+T = 49.14 C 0x045 batt = 0.06 remote9 
+T = 48.20 C 0x048 batt = 0.06 remote8 
+^Cdevel@pi5-90:~ $ mosquitto_sub -t 'pico/status' -u 'testuser' -P 'password123' -h '192.168.1.253'
+T = 28.54 C 0x044 batt = 0.05 remote3 
+T = 34.63 C 0x038 batt = 0.05 remote7 
+T = 31.82 C 0x046 batt = 0.06 remote2 
+T = 32.29 C 0x03d batt = 0.05 remote5 
+T = 35.56 C 0x039 batt = 0.05 remote9 
+T = 34.63 C 0x037 batt = 0.04 remote8 
+T = 28.54 C 0x044 batt = 0.05 remote3 
+T = 34.63 C 0x038 batt = 0.05 remote7 
